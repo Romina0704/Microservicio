@@ -18,13 +18,23 @@ jobs:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_SSH_KEY }}
-          script: |
+       script: |
             cd /home/azureuser/
-            # Bajamos lo que está corriendo
-            docker-compose down
-            # Actualizamos el código de ambas carpetas
-            cd /home/azureuser/MicroserviciosApp && git pull
-            cd /home/azureuser/Microservicio && git pull
-            # Volvemos a la raíz y levantamos todo
+            
+            # 1. Detener y ELIMINAR contenedores y redes viejas
+            docker-compose down --remove-orphans
+            
+            # 2. Actualizar el código de Clientes
+            cd /home/azureuser/MicroserviciosApp
+            git pull origin master || git pull origin main
+            
+            # 3. Actualizar el código de Pedidos
+            cd /home/azureuser/Microservicio
+            git pull origin master || git pull origin main
+            
+            # 4. Volver a la raíz y levantar todo de nuevo
             cd /home/azureuser/
             docker-compose up -d --build
+            
+            # 5. Limpieza profunda de imágenes y contenedores parados
+            docker system prune -f
