@@ -17,16 +17,29 @@ public class Pedido {
     @Column(name = "fecha_pedido", nullable = false)
     private LocalDate fechaPedido;
 
+    @Column(name = "cliente_id", nullable = false)  // ← agrega esto
+    private Long clienteId;
     // 🔹 Constructor vacío (OBLIGATORIO para JPA)
     public Pedido() {
     }
 
-    // 🔹 Constructor con campos
-    public Pedido(String estado, LocalDate fechaPedido) {
+
+    // Constructor vacío
+
+    // Constructor con campos
+    public Pedido(String estado, LocalDate fechaPedido, Long clienteId) {
         this.estado = estado;
         this.fechaPedido = fechaPedido;
+        this.clienteId = clienteId;
     }
 
+    public Long getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
     // 🔹 Getters y Setters
     public Long getId() {
         return id;

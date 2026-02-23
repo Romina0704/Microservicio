@@ -1,21 +1,29 @@
 package com.microservicio.microserviciopedidos.controller;
 
+import com.microservicio.microserviciopedidos.client.ClienteClient;
+import com.microservicio.microserviciopedidos.dto.ClienteDTO;
 import com.microservicio.microserviciopedidos.entidad.Pedido;
+import com.microservicio.microserviciopedidos.repository.PedidoRepository;
 import com.microservicio.microserviciopedidos.service.PedidoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/pedidos")
 public class PedidoController {
 
     private final PedidoService pedidoService;
+    private final ClienteClient clienteClient;
+    private final PedidoRepository pedidoRepository;
 
-    public PedidoController(PedidoService pedidoService) {
+    public PedidoController(PedidoService pedidoService , ClienteClient clienteClient,  PedidoRepository pedidoRepository) {
         this.pedidoService = pedidoService;
+        this.clienteClient = clienteClient;
+        this.pedidoRepository =pedidoRepository;
     }
 
     @GetMapping
@@ -23,14 +31,16 @@ public class PedidoController {
         model.addAttribute("pedidos", pedidoService.listarPedidos());
         return "pedidos";
     }
+    // Devuelve todos los clientes (para el selector del formulario)
+    @GetMapping("/clientes")
+    @ResponseBody
+    public List<ClienteDTO> obtenerClientes() {
+        return clienteClient.listarClientes();
+    }
 
     @PostMapping("/agregar")
-    public String agregarPedido(@RequestParam String fechaPedido,
-                                @RequestParam String estado) {
-        Pedido pedido = new Pedido();
-        pedido.setFechaPedido(LocalDate.parse(fechaPedido));
-        pedido.setEstado(estado);
-        pedidoService.crearPedido(pedido);
+    public String agregarPedido(@ModelAttribute Pedido pedido) {
+        pedidoRepository.save(pedido);
         return "redirect:/pedidos";
     }
 
@@ -52,4 +62,5 @@ public class PedidoController {
         pedidoService.eliminarPedido(id);
         return "pedidos";
     }
+
 }
