@@ -1,1 +1,30 @@
+name: Deploy to Azure VM
 
+on:
+  push:
+    branches:
+      - main  # O la rama que uses (master/main)
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Azure VM via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_SSH_KEY }}
+          script: |
+            cd /home/azureuser/
+            # Bajamos lo que está corriendo
+            docker-compose down
+            # Actualizamos el código de ambas carpetas
+            cd /home/azureuser/MicroserviciosApp && git pull
+            cd /home/azureuser/Microservicio && git pull
+            # Volvemos a la raíz y levantamos todo
+            cd /home/azureuser/
+            docker-compose up -d --build
