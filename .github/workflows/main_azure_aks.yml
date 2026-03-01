@@ -1,8 +1,8 @@
-name: Deploy Microservice to Azure AKS (via ACR)
+name: Deploy Microservice to Azure AKS
 
 on:
   push:
-    branches: [ "feature-kubernetes" ] # Se activa solo en esta rama
+    branches: [ "main" ] # Se activa al subir cambios a la rama main
 
 jobs:
   build-and-deploy:
