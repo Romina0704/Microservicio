@@ -3,247 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Pedidos</title>
-
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #1c2333;
+            --border: #30363d;
+            --accent: #f0a500;
+            --text: #e6edf3;
+            --muted: #7d8590;
+            --green: #3fb950;
+            --red: #f85149;
         }
 
-        body {
-            background: #f4f6fb;
-            min-height: 100vh;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 64px;
+            background: var(--surface); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 0; gap: 28px; z-index: 10;
+        }
+        .sidebar-logo {
+            width: 36px; height: 36px; background: var(--accent); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Fraunces', serif; font-weight: 700; color: var(--bg); font-size: 1.1rem;
+        }
+        .sidebar-icon {
+            width: 38px; height: 38px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--muted); transition: all 0.2s; font-size: 1.1rem;
+        }
+        .sidebar-icon:hover, .sidebar-icon.active { background: var(--surface2); color: var(--accent); }
+
+        .main { margin-left: 64px; padding: 32px 36px; }
+
+        .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; }
+        .topbar-left h1 { font-family: 'Fraunces', serif; font-size: 1.9rem; font-weight: 700; line-height: 1; }
+        .topbar-left p { color: var(--muted); font-size: 0.82rem; margin-top: 5px; }
+
+        .btn-new {
+            background: var(--accent); color: var(--bg); border: none; border-radius: 8px;
+            padding: 11px 20px; font-family: 'DM Sans', sans-serif; font-weight: 600;
+            font-size: 0.88rem; cursor: pointer; display: flex; align-items: center;
+            gap: 7px; transition: all 0.2s;
+        }
+        .btn-new:hover { background: #f5b830; transform: translateY(-1px); }
+
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+        .stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+        .stat-value { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 600; line-height: 1; }
+
+        .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .table-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .table-toolbar span { font-size: 0.85rem; color: var(--muted); }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            padding: 12px 20px; text-align: left; font-size: 0.72rem;
+            text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+            font-weight: 500; border-bottom: 1px solid var(--border); background: var(--surface2);
+        }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface2); }
+        tbody td { padding: 14px 20px; font-size: 0.875rem; vertical-align: middle; }
+
+        .id-pill { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-creado    { background: rgba(240,165,0,0.15);  color: #f0a500; }
+        .badge-confirmado{ background: rgba(163,113,247,0.15); color: #a371f7; }
+        .badge-entregado { background: rgba(63,185,80,0.15);  color: #3fb950; }
+        .badge-cancelado { background: rgba(248,81,73,0.15);  color: #f85149; }
+
+        .cliente-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; }
+        .cliente-avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--bg); font-size: 0.62rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+        .btn-action { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem; transition: all 0.15s; margin-right: 4px; }
+        .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-action.del:hover { border-color: var(--red); color: var(--red); }
+
+        /* ── Modal ── */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal.open { display: flex; }
+        .modal-box {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+            width: 92%; max-width: 620px; max-height: 90vh; overflow-y: auto;
+            animation: modalIn 0.25s ease;
+        }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .modal-header { padding: 22px 26px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); z-index: 1; }
+        .modal-header h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 600; }
+        .modal-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; transition: color 0.15s; }
+        .modal-close:hover { color: var(--text); }
+
+        .modal-body { padding: 22px 26px; }
+
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 7px; font-weight: 500; }
+        .field input, .field select {
+            width: 100%; background: var(--bg); border: 1px solid var(--border);
+            border-radius: 7px; padding: 11px 14px; color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s;
+        }
+        .field input:focus, .field select:focus { border-color: var(--accent); }
+        .field select option { background: var(--surface2); }
+
+        .search-row { display: flex; gap: 8px; }
+        .search-row input { flex: 1; }
+
+        .btn-buscar {
+            background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+            border-radius: 7px; padding: 11px 16px; cursor: pointer; font-size: 0.82rem;
+            font-family: 'DM Sans', sans-serif; font-weight: 500; white-space: nowrap;
+            transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+        }
+        .btn-buscar:hover { border-color: var(--accent); color: var(--accent); }
+
+        .dropdown {
+            display: none; margin-top: 6px; background: var(--bg);
+            border: 1px solid var(--border); border-radius: 8px; max-height: 180px; overflow-y: auto;
+        }
+        .dropdown.show { display: block; }
+
+        .drop-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.15s; display: flex; align-items: center; gap: 10px; }
+        .drop-item:last-child { border-bottom: none; }
+        .drop-item:hover { background: var(--surface2); }
+        .drop-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--bg); font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .drop-avatar.prod { background: #3fb950; border-radius: 6px; }
+        .drop-info .name { font-size: 0.88rem; font-weight: 500; }
+        .drop-info .sub { font-size: 0.75rem; color: var(--muted); }
+
+        .selected-chip {
+            display: none; align-items: center; gap: 10px;
+            background: rgba(240,165,0,0.08); border: 1px solid rgba(240,165,0,0.3);
+            border-radius: 8px; padding: 10px 14px; margin-top: 8px;
+        }
+        .selected-chip.show { display: flex; }
+        .selected-chip .info .name { font-size: 0.88rem; font-weight: 500; color: var(--accent); }
+        .selected-chip .info .sub { font-size: 0.75rem; color: var(--muted); }
+        .btn-clear { margin-left: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; transition: color 0.15s; }
+        .btn-clear:hover { color: var(--red); }
+
+        .no-items { padding: 16px 14px; text-align: center; color: var(--muted); font-size: 0.82rem; }
+
+        /* ── Detalle tabla productos ── */
+        .section-title {
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--muted); font-weight: 500; margin-bottom: 8px; margin-top: 4px;
         }
 
-        /* ===== HEADER ===== */
-        .menu-header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 30px 40px;
-            border-radius: 0 0 30px 30px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.15);
-            margin-bottom: 40px;
-        }
+        .detalle-wrap { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+        .detalle-wrap table thead th { background: var(--surface2); padding: 9px 12px; font-size: 0.68rem; }
+        .detalle-wrap table tbody td { padding: 10px 12px; font-size: 0.82rem; border-bottom: 1px solid var(--border); }
+        .detalle-wrap table tbody tr:last-child td { border-bottom: none; }
 
-        .menu-header h1 {
-            color: white;
-            font-size: 2rem;
-            margin-bottom: 8px;
+        .qty-input {
+            width: 64px; background: var(--surface); border: 1px solid var(--border);
+            border-radius: 5px; padding: 5px 8px; color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: 0.82rem; text-align: center; outline: none;
         }
+        .qty-input:focus { border-color: var(--accent); }
 
-        .menu-header p {
-            color: #e0e0ff;
-            font-size: 1.1rem;
-        }
+        .btn-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.9rem; padding: 4px 6px; border-radius: 4px; transition: all 0.15s; }
+        .btn-remove:hover { color: var(--red); background: rgba(248,81,73,0.1); }
 
-        /* ===== CONTENIDO ===== */
-        .main-content {
-            padding: 0 20px 40px;
-        }
+        .total-row td { padding: 10px 12px !important; background: var(--surface2); border-top: 2px solid var(--border) !important; }
 
-        .page-title {
-            text-align: center;
-            color: #333;
-            font-size: 2.2rem;
-            margin-bottom: 30px;
-        }
+        .modal-footer { padding: 16px 26px 22px; display: flex; gap: 10px; justify-content: flex-end; position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--border); }
+        .btn-save { background: var(--accent); color: var(--bg); border: none; border-radius: 7px; padding: 11px 24px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: background 0.2s; }
+        .btn-save:hover { background: #f5b830; }
+        .btn-cancel-m { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); border-radius: 7px; padding: 11px 18px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; cursor: pointer; transition: all 0.15s; }
+        .btn-cancel-m:hover { color: var(--text); }
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
+        .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 12px 18px; border-radius: 8px; font-size: 0.85rem; opacity: 0; transform: translateY(8px); transition: all 0.3s; z-index: 9999; pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateY(0); }
 
-        /* ===== BOTÓN ===== */
-        .btn-add {
-            background: #4ade80;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .btn-add:hover {
-            background: #22c55e;
-            transform: translateY(-1px);
-        }
-
-        /* ===== TABLA ===== */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        th, td {
-            padding: 14px;
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        th {
-            background: #eef1f7;
-            color: #333;
-            font-weight: 600;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        tbody tr:hover {
-            background: #f9fafc;
-        }
-
-        /* ===== ACCIONES ===== */
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .actions button {
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: white;
-            transition: 0.3s;
-        }
-
-        .btn-edit {
-            background: #6c63ff;
-        }
-
-        .btn-edit:hover {
-            background: #574fe3;
-            transform: scale(1.05);
-        }
-
-        .btn-delete {
-            background: #ff6b6b;
-        }
-
-        .btn-delete:hover {
-            background: #e55353;
-            transform: scale(1.05);
-        }
-
-        /* ===== ESTADOS ===== */
-        .estado-badge {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: white;
-            font-size: 13px;
-        }
-
-        .estado-creado { background: #facc15; }
-        .estado-confirmado { background: #7b68ee; }
-        .estado-entregado { background: #22c55e; }
-        .estado-cancelado { background: #ef4444; }
-
-        /* ===== MODALES ===== */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        .modal-content h3 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .modal-content input,
-        .modal-content select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-
-        .modal-content button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-save {
-            background: #4ade80;
-            color: white;
-        }
-
-        .btn-cancel {
-            background: #e5e7eb;
-        }
+        .divider { height: 1px; background: var(--border); margin: 18px 0; }
     </style>
 </head>
-
 <body>
 
-<div class="menu-header">
-    <h1>📦 Sistema de Pedidos</h1>
-    <p>Gestión y control de pedidos</p>
+<div id="toast" class="toast"></div>
+
+<div class="sidebar">
+    <div class="sidebar-logo">P</div>
+    <div class="sidebar-icon active" title="Pedidos">📦</div>
+    <div class="sidebar-icon" title="Clientes">👥</div>
+    <div class="sidebar-icon" title="Reportes">📊</div>
 </div>
 
-<div class="main-content">
-    <h1 class="page-title">Gestión de Pedidos</h1>
+<div class="main">
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>Pedidos</h1>
+            <p>Gestión y control de órdenes</p>
+        </div>
+        <button class="btn-new" onclick="openAddModal()">＋ Nuevo Pedido</button>
+    </div>
 
-    <div class="container">
-        <button class="btn-add" onclick="openAddModal()">➕ Nuevo Pedido</button>
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-label">Total</div>
+            <div class="stat-value" id="stat-total" style="color:var(--text)">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Creados</div>
+            <div class="stat-value" style="color:var(--accent)" id="stat-creado">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Entregados</div>
+            <div class="stat-value" style="color:var(--green)" id="stat-entregado">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Cancelados</div>
+            <div class="stat-value" style="color:var(--red)" id="stat-cancelado">0</div>
+        </div>
+    </div>
 
+    <div class="table-card">
+        <div class="table-toolbar">
+            <span id="table-count">Cargando pedidos...</span>
+        </div>
         <table>
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Fecha</th>
-                <th>Estado</th>
-                <th>Acciones</th>
+                <th>#</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th>Acciones</th>
             </tr>
             </thead>
-            <tbody>
-            <tr th:each="p : ${pedidos}">
-                <td th:text="${p.id}"></td>
+            <tbody id="tabla-body">
+            <tr th:each="p : ${pedidos}" th:if="${pedidos != null}">
+                <td><span class="id-pill" th:text="${p.id}"></span></td>
                 <td th:text="${p.fechaPedido}"></td>
                 <td>
-                    <span th:text="${p.estado}"
-                          th:class="'estado-badge estado-' + ${#strings.toLowerCase(p.estado)}">
-                    </span>
+                    <div class="cliente-chip">
+                        <div class="cliente-avatar">C</div>
+                        <span th:text="${p.clienteId}">—</span>
+                    </div>
                 </td>
-                <td class="actions">
-                    <button class="btn-edit"
-                            th:data-id="${p.id}"
-                            th:data-fecha="${p.fechaPedido}"
-                            th:data-estado="${p.estado}"
-                            onclick="openEditModal(this)">✏️</button>
-
-                    <form th:action="@{/pedidos/eliminar/{id}(id=${p.id})}" method="post">
-                        <button class="btn-delete" type="submit">🗑️</button>
+                <td>
+                    <span th:text="${p.estado}" th:class="'badge badge-' + ${#strings.toLowerCase(p.estado)}"></span>
+                </td>
+                <td>
+                    <button class="btn-action"
+                            th:data-id="${p.id}" th:data-fecha="${p.fechaPedido}" th:data-estado="${p.estado}"
+                            onclick="openEditModal(this)">✏️ Editar</button>
+                    <form th:action="@{/pedidos/eliminar/{id}(id=${p.id})}" method="post" style="display:inline">
+                        <button class="btn-action del" type="submit">🗑️</button>
                     </form>
                 </td>
             </tr>
@@ -252,64 +263,341 @@
     </div>
 </div>
 
-<!-- MODAL AGREGAR -->
+<!-- ═══ MODAL AGREGAR ═══ -->
 <div id="addModal" class="modal">
-    <div class="modal-content">
-        <h3>Nuevo Pedido</h3>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Nuevo Pedido</h3>
+            <button class="modal-close" onclick="closeAddModal()">✕</button>
+        </div>
         <form th:action="@{/pedidos/agregar}" method="post">
-            <input type="date" name="fechaPedido" required>
-            <select name="estado" required>
-                <option value="">Seleccione estado</option>
-                <option value="CREADO">Creado</option>
-                <option value="CONFIRMADO">Confirmado</option>
-                <option value="ENTREGADO">Entregado</option>
-                <option value="CANCELADO">Cancelado</option>
-            </select>
-            <button class="btn-save" type="submit">Guardar</button>
-            <button class="btn-cancel" type="button" onclick="closeAddModal()">Cancelar</button>
+            <div class="modal-body">
+
+                <!-- Cliente -->
+                <div class="field">
+                    <label>Cliente</label>
+                    <div class="search-row">
+                        <input type="text" id="searchCliente" placeholder="Buscar por nombre o cédula..." autocomplete="off" oninput="filtrarClientes(this.value)">
+                        <button type="button" class="btn-buscar" onclick="cargarClientes()">🔍 Buscar</button>
+                    </div>
+                    <div id="clientesDropdown" class="dropdown"></div>
+                    <div id="clienteSeleccionado" class="selected-chip">
+                        <div class="drop-avatar" id="selAvatar">--</div>
+                        <div class="info">
+                            <div class="name" id="selNombre">—</div>
+                            <div class="sub" id="selCedula">—</div>
+                        </div>
+                        <button type="button" class="btn-clear" onclick="limpiarCliente()">✕</button>
+                    </div>
+                    <input type="hidden" name="clienteId" id="clienteIdInput">
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Productos -->
+                <div class="field">
+                    <label>Agregar Productos</label>
+                    <div class="search-row">
+                        <input type="text" id="searchProducto" placeholder="Buscar producto..." autocomplete="off" oninput="filtrarProductos(this.value)">
+                        <button type="button" class="btn-buscar" onclick="cargarProductos()">🔍 Buscar</button>
+                    </div>
+                    <div id="productosDropdown" class="dropdown"></div>
+                </div>
+
+                <!-- Tabla detalle -->
+                <div id="detalleWrap" style="display:none;">
+                    <div class="section-title">📋 Detalle del Pedido</div>
+                    <div class="detalle-wrap">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th style="text-align:center">Precio Unit.</th>
+                                <th style="text-align:center">Cantidad</th>
+                                <th style="text-align:center">Subtotal</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody id="detalleTabla"></tbody>
+                            <tfoot>
+                            <tr class="total-row">
+                                <td colspan="3" style="text-align:right;color:var(--muted);font-size:0.78rem;font-weight:600;">TOTAL DEL PEDIDO</td>
+                                <td style="text-align:center;font-weight:700;color:var(--accent);font-size:1rem;" id="totalPedido">$0.00</td>
+                                <td></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <input type="hidden" name="detalle" id="detalleInput">
+
+                <div class="divider"></div>
+
+                <!-- Fecha -->
+                <div class="field">
+                    <label>Fecha del Pedido</label>
+                    <input type="date" name="fechaPedido" required>
+                </div>
+
+                <!-- Estado -->
+                <div class="field">
+                    <label>Estado</label>
+                    <select name="estado" required>
+                        <option value="">Seleccione estado</option>
+                        <option value="CREADO">Creado</option>
+                        <option value="CONFIRMADO">Confirmado</option>
+                        <option value="ENTREGADO">Entregado</option>
+                        <option value="CANCELADO">Cancelado</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeAddModal()">Cancelar</button>
+                <button type="submit" class="btn-save" onclick="prepararDetalle()">Guardar Pedido</button>
+            </div>
         </form>
     </div>
 </div>
 
-<!-- MODAL EDITAR -->
+<!-- ═══ MODAL EDITAR ═══ -->
 <div id="editModal" class="modal">
-    <div class="modal-content">
-        <h3>Editar Pedido</h3>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Editar Pedido</h3>
+            <button class="modal-close" onclick="closeEditModal()">✕</button>
+        </div>
         <form th:action="@{/pedidos/editar}" method="post">
-            <input type="hidden" name="id" id="editId">
-            <input type="date" name="fechaPedido" id="editFecha" required>
-            <select name="estado" id="editEstado" required>
-                <option value="CREADO">Creado</option>
-                <option value="CONFIRMADO">Confirmado</option>
-                <option value="ENTREGADO">Entregado</option>
-                <option value="CANCELADO">Cancelado</option>
-            </select>
-            <button class="btn-save" type="submit">Guardar</button>
-            <button class="btn-cancel" type="button" onclick="closeEditModal()">Cancelar</button>
+            <div class="modal-body">
+                <input type="hidden" name="id" id="editId">
+                <div class="field">
+                    <label>Fecha del Pedido</label>
+                    <input type="date" name="fechaPedido" id="editFecha" required>
+                </div>
+                <div class="field">
+                    <label>Estado</label>
+                    <select name="estado" id="editEstado" required>
+                        <option value="CREADO">Creado</option>
+                        <option value="CONFIRMADO">Confirmado</option>
+                        <option value="ENTREGADO">Entregado</option>
+                        <option value="CANCELADO">Cancelado</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeEditModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Cambios</button>
+            </div>
         </form>
     </div>
 </div>
 
 <script>
-    function openAddModal() {
-        document.getElementById("addModal").style.display = "flex";
+    // ════ ESTADO ════
+    let todosClientes  = [];
+    let todosProductos = [];
+    let detalleItems   = []; // [{id, nombre, precio, cantidad}]
+
+    const API_PRODUCTOS = 'http://20.200.86.161/api/productos';
+
+    // ════ STATS ════
+    document.addEventListener('DOMContentLoaded', () => {
+        const rows = document.querySelectorAll('#tabla-body tr');
+        let creado = 0, entregado = 0, cancelado = 0;
+        rows.forEach(r => {
+            const b = r.querySelector('.badge');
+            if (!b) return;
+            const t = b.textContent.trim().toUpperCase();
+            if (t === 'CREADO')    creado++;
+            if (t === 'ENTREGADO') entregado++;
+            if (t === 'CANCELADO') cancelado++;
+        });
+        document.getElementById('stat-total').textContent     = rows.length;
+        document.getElementById('stat-creado').textContent    = creado;
+        document.getElementById('stat-entregado').textContent = entregado;
+        document.getElementById('stat-cancelado').textContent = cancelado;
+        document.getElementById('table-count').textContent    = rows.length + ' pedido(s) registrado(s)';
+    });
+
+    // ════ CLIENTES ════
+    function cargarClientes() {
+        const drop = document.getElementById('clientesDropdown');
+        drop.innerHTML = '<div class="no-items">Cargando...</div>';
+        drop.classList.add('show');
+        fetch('/pedidos/listar-clientes')
+            .then(r => r.json())
+            .then(data => { todosClientes = data; renderClientes(data); })
+            .catch(() => { drop.innerHTML = '<div class="no-items">⚠️ Servicio de clientes no disponible</div>'; });
     }
 
+    function filtrarClientes(q) {
+        if (todosClientes.length === 0) { cargarClientes(); return; }
+        const f = q ? todosClientes.filter(c => (c.nombre+' '+c.apellido+c.cedula).toLowerCase().includes(q.toLowerCase())) : todosClientes;
+        renderClientes(f);
+    }
+
+    function renderClientes(lista) {
+        const drop = document.getElementById('clientesDropdown');
+        drop.classList.add('show');
+        if (!lista.length) { drop.innerHTML = '<div class="no-items">No se encontraron clientes</div>'; return; }
+        drop.innerHTML = lista.map(c => `
+            <div class="drop-item" onclick="seleccionarCliente(${c.id},'${c.nombre}','${c.apellido}','${c.cedula}')">
+                <div class="drop-avatar">${c.nombre[0]}${c.apellido[0]}</div>
+                <div class="drop-info">
+                    <div class="name">${c.nombre} ${c.apellido}</div>
+                    <div class="sub">Cédula: ${c.cedula}</div>
+                </div>
+            </div>`).join('');
+    }
+
+    function seleccionarCliente(id, nombre, apellido, cedula) {
+        document.getElementById('clienteIdInput').value = id;
+        document.getElementById('selNombre').textContent = nombre + ' ' + apellido;
+        document.getElementById('selCedula').textContent = 'Cédula: ' + cedula;
+        document.getElementById('selAvatar').textContent = nombre[0] + apellido[0];
+        document.getElementById('clienteSeleccionado').classList.add('show');
+        document.getElementById('clientesDropdown').classList.remove('show');
+        document.getElementById('searchCliente').value = '';
+    }
+
+    function limpiarCliente() {
+        document.getElementById('clienteIdInput').value = '';
+        document.getElementById('clienteSeleccionado').classList.remove('show');
+    }
+
+    // ════ PRODUCTOS ════
+    function cargarProductos() {
+        const drop = document.getElementById('productosDropdown');
+        drop.innerHTML = '<div class="no-items">Cargando productos...</div>';
+        drop.classList.add('show');
+        fetch(API_PRODUCTOS)
+            .then(r => r.json())
+            .then(data => {
+                // Soporte para {data:[...]} o array directo
+                todosProductos = Array.isArray(data) ? data : (data.data || data.productos || []);
+                renderProductos(todosProductos);
+            })
+            .catch(() => { drop.innerHTML = '<div class="no-items">⚠️ No se pudo cargar productos</div>'; });
+    }
+
+    function filtrarProductos(q) {
+        if (todosProductos.length === 0) { cargarProductos(); return; }
+        const f = q ? todosProductos.filter(p => p.nombre.toLowerCase().includes(q.toLowerCase())) : todosProductos;
+        renderProductos(f);
+    }
+
+    function renderProductos(lista) {
+        const drop = document.getElementById('productosDropdown');
+        drop.classList.add('show');
+        if (!lista.length) { drop.innerHTML = '<div class="no-items">No se encontraron productos</div>'; return; }
+        drop.innerHTML = lista.map(p => `
+            <div class="drop-item" onclick="agregarProducto(${p.id},'${escapar(p.nombre)}',${p.precio},${p.stock || 99})">
+                <div class="drop-avatar prod">📦</div>
+                <div class="drop-info">
+                    <div class="name">${p.nombre}</div>
+                    <div class="sub">$${parseFloat(p.precio).toFixed(2)} · Stock: ${p.stock ?? '—'}</div>
+                </div>
+            </div>`).join('');
+    }
+
+    function escapar(s) { return s.replace(/'/g, "\\'"); }
+
+    // ════ DETALLE PEDIDO ════
+    function agregarProducto(id, nombre, precio, stock) {
+        document.getElementById('productosDropdown').classList.remove('show');
+        document.getElementById('searchProducto').value = '';
+
+        const existe = detalleItems.find(i => i.id === id);
+        if (existe) {
+            if (existe.cantidad < stock) { existe.cantidad++; }
+            else { showToast('⚠️ Stock máximo alcanzado'); }
+        } else {
+            detalleItems.push({ id, nombre, precio: parseFloat(precio), cantidad: 1, stock });
+        }
+        renderDetalle();
+    }
+
+    function renderDetalle() {
+        const wrap  = document.getElementById('detalleWrap');
+        const tbody = document.getElementById('detalleTabla');
+
+        if (detalleItems.length === 0) { wrap.style.display = 'none'; tbody.innerHTML = ''; actualizarTotal(); return; }
+        wrap.style.display = 'block';
+
+        tbody.innerHTML = detalleItems.map((item, i) => `
+            <tr>
+                <td style="font-weight:500">${item.nombre}</td>
+                <td style="text-align:center;color:var(--muted)">$${item.precio.toFixed(2)}</td>
+                <td style="text-align:center">
+                    <input type="number" class="qty-input" value="${item.cantidad}" min="1" max="${item.stock}"
+                           onchange="cambiarCantidad(${i}, this.value)">
+                </td>
+                <td style="text-align:center;color:var(--accent);font-weight:600">
+                    $${(item.precio * item.cantidad).toFixed(2)}
+                </td>
+                <td style="text-align:center">
+                    <button type="button" class="btn-remove" onclick="quitarProducto(${i})">🗑</button>
+                </td>
+            </tr>`).join('');
+
+        actualizarTotal();
+    }
+
+    function cambiarCantidad(i, val) {
+        const qty = parseInt(val);
+        if (qty < 1) { detalleItems[i].cantidad = 1; }
+        else if (qty > detalleItems[i].stock) { detalleItems[i].cantidad = detalleItems[i].stock; }
+        else { detalleItems[i].cantidad = qty; }
+        renderDetalle();
+    }
+
+    function quitarProducto(i) {
+        detalleItems.splice(i, 1);
+        renderDetalle();
+    }
+
+    function actualizarTotal() {
+        const total = detalleItems.reduce((s, i) => s + i.precio * i.cantidad, 0);
+        document.getElementById('totalPedido').textContent = '$' + total.toFixed(2);
+    }
+
+    function prepararDetalle() {
+        document.getElementById('detalleInput').value = JSON.stringify(detalleItems);
+    }
+
+    // ════ MODALES ════
+    function openAddModal()  { document.getElementById('addModal').classList.add('open'); }
     function closeAddModal() {
-        document.getElementById("addModal").style.display = "none";
+        document.getElementById('addModal').classList.remove('open');
+        document.getElementById('clientesDropdown').classList.remove('show');
+        document.getElementById('productosDropdown').classList.remove('show');
+        limpiarCliente();
+        detalleItems = [];
+        renderDetalle();
     }
 
     function openEditModal(btn) {
-        document.getElementById("editId").value = btn.dataset.id;
-        document.getElementById("editFecha").value = btn.dataset.fecha;
-        document.getElementById("editEstado").value = btn.dataset.estado;
-        document.getElementById("editModal").style.display = "flex";
+        document.getElementById('editId').value    = btn.dataset.id;
+        document.getElementById('editFecha').value = btn.dataset.fecha;
+        document.getElementById('editEstado').value= btn.dataset.estado;
+        document.getElementById('editModal').classList.add('open');
     }
+    function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
 
-    function closeEditModal() {
-        document.getElementById("editModal").style.display = "none";
+    // Cerrar dropdowns al click fuera
+    document.addEventListener('click', e => {
+        if (!e.target.closest('#searchCliente') && !e.target.closest('#clientesDropdown') && !e.target.closest('.btn-buscar'))
+            document.getElementById('clientesDropdown').classList.remove('show');
+        if (!e.target.closest('#searchProducto') && !e.target.closest('#productosDropdown') && !e.target.closest('.btn-buscar'))
+            document.getElementById('productosDropdown').classList.remove('show');
+    });
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2800);
     }
 </script>
-
 </body>
 </html>
