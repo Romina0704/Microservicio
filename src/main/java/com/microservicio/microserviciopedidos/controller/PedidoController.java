@@ -85,4 +85,8 @@ public class PedidoController {
     public List<ClienteDTO> listarClientes() {
         return clienteService.listarClientes();
     }
+    @PostMapping
+    public Pedido guardar(@RequestBody Pedido pedido) {
+        return pedidoService.guardarPedido(pedido);
+    }
 }

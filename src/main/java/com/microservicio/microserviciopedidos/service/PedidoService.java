@@ -1,5 +1,6 @@
 package com.microservicio.microserviciopedidos.service;
 
+import com.microservicio.microserviciopedidos.entidad.DetallePedido;
 import com.microservicio.microserviciopedidos.entidad.Pedido;
 import com.microservicio.microserviciopedidos.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
@@ -33,5 +34,14 @@ public class PedidoService {
 
     public void eliminarPedido(Long id) {
         pedidoRepository.deleteById(id);
+    }
+
+    public Pedido guardarPedido(Pedido pedido) {
+
+        for (DetallePedido detalle : pedido.getDetalles()) {
+            detalle.setPedido(pedido);
+        }
+
+        return pedidoRepository.save(pedido);
     }
 }

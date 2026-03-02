@@ -2,6 +2,7 @@ package com.microservicio.microserviciopedidos.entidad;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "pedido")
@@ -17,23 +18,20 @@ public class Pedido {
     @Column(name = "fecha_pedido", nullable = false)
     private LocalDate fechaPedido;
 
-    // 🔹 Constructor vacío (OBLIGATORIO para JPA)
-    public Pedido() {
-    }
+    @Column(name = "cliente_id", nullable = false)
+    private Long clienteId;
 
-    // 🔹 Constructor con campos
-    public Pedido(String estado, LocalDate fechaPedido) {
-        this.estado = estado;
-        this.fechaPedido = fechaPedido;
-    }
+    // 🔥 RELACIÓN CON DETALLE
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetallePedido> detalles;
+
+    // 🔹 Constructor vacío (OBLIGATORIO)
+    public Pedido() {}
 
     // 🔹 Getters y Setters
+
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getEstado() {
@@ -52,5 +50,19 @@ public class Pedido {
         this.fechaPedido = fechaPedido;
     }
 
+    public Long getClienteId() {
+        return clienteId;
+    }
 
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
+
+    public List<DetallePedido> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetallePedido> detalles) {
+        this.detalles = detalles;
+    }
 }
