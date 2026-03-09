@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-<<<<<<< HEAD
+
         <version>4.0.2</version>
         <relativePath/>
-=======
+
         <version>3.2.5</version>
->>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
+
     </parent>
     <groupId>com.microservicio</groupId>
     <artifactId>Microservicio-Pedidos</artifactId>
