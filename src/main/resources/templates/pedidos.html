@@ -15,6 +15,7 @@
             --muted: #7d8590;
             --green: #3fb950;
             --red: #f85149;
+            --blue: #58a6ff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,6 +37,7 @@
             width: 38px; height: 38px; border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; color: var(--muted); transition: all 0.2s; font-size: 1.1rem;
+            text-decoration: none;
         }
         .sidebar-icon:hover, .sidebar-icon.active { background: var(--surface2); color: var(--accent); }
 
@@ -83,11 +85,11 @@
         .cliente-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; }
         .cliente-avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--bg); font-size: 0.62rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
-        .btn-action { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem; transition: all 0.15s; margin-right: 4px; }
+        .btn-action { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem; transition: all 0.15s; margin-right: 4px; text-decoration: none; display: inline-block; }
         .btn-action:hover { border-color: var(--accent); color: var(--accent); }
         .btn-action.del:hover { border-color: var(--red); color: var(--red); }
+        .btn-action.view:hover { border-color: var(--blue); color: var(--blue); }
 
-        /* ── Modal ── */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal.open { display: flex; }
         .modal-box {
@@ -152,7 +154,6 @@
 
         .no-items { padding: 16px 14px; text-align: center; color: var(--muted); font-size: 0.82rem; }
 
-        /* ── Detalle tabla productos ── */
         .section-title {
             font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px;
             color: var(--muted); font-weight: 500; margin-bottom: 8px; margin-top: 4px;
@@ -193,9 +194,10 @@
 
 <div class="sidebar">
     <div class="sidebar-logo">P</div>
-    <div class="sidebar-icon active" title="Pedidos">📦</div>
-    <div class="sidebar-icon" title="Clientes">👥</div>
-    <div class="sidebar-icon" title="Reportes">📊</div>
+    <a href="/pedidos"     class="sidebar-icon active" title="Pedidos">📦</a>
+    <a href="#"    class="sidebar-icon"        title="Clientes">👥</a>
+    <a href="/proveedores" class="sidebar-icon"        title="Proveedores">🏭</a>
+    <a href="/reportes"    class="sidebar-icon"        title="Reportes">📊</a>
 </div>
 
 <div class="main">
@@ -250,6 +252,7 @@
                     <span th:text="${p.estado}" th:class="'badge badge-' + ${#strings.toLowerCase(p.estado)}"></span>
                 </td>
                 <td>
+                    <a class="btn-action view" th:href="@{/pedidos/detalle/{id}(id=${p.id})}">👁️ Ver</a>
                     <button class="btn-action"
                             th:data-id="${p.id}" th:data-fecha="${p.fechaPedido}" th:data-estado="${p.estado}"
                             onclick="openEditModal(this)">✏️ Editar</button>
@@ -263,17 +266,16 @@
     </div>
 </div>
 
-<!-- ═══ MODAL AGREGAR ═══ -->
+<!-- MODAL AGREGAR -->
 <div id="addModal" class="modal">
     <div class="modal-box">
         <div class="modal-header">
             <h3>Nuevo Pedido</h3>
             <button class="modal-close" onclick="closeAddModal()">✕</button>
         </div>
-        <form th:action="@{/pedidos/agregar}" method="post">
+        <form th:action="@{/pedidos/agregar}" method="post" id="formAgregar">
             <div class="modal-body">
 
-                <!-- Cliente -->
                 <div class="field">
                     <label>Cliente</label>
                     <div class="search-row">
@@ -294,7 +296,6 @@
 
                 <div class="divider"></div>
 
-                <!-- Productos -->
                 <div class="field">
                     <label>Agregar Productos</label>
                     <div class="search-row">
@@ -304,7 +305,6 @@
                     <div id="productosDropdown" class="dropdown"></div>
                 </div>
 
-                <!-- Tabla detalle -->
                 <div id="detalleWrap" style="display:none;">
                     <div class="section-title">📋 Detalle del Pedido</div>
                     <div class="detalle-wrap">
@@ -334,13 +334,11 @@
 
                 <div class="divider"></div>
 
-                <!-- Fecha -->
                 <div class="field">
                     <label>Fecha del Pedido</label>
                     <input type="date" name="fechaPedido" required>
                 </div>
 
-                <!-- Estado -->
                 <div class="field">
                     <label>Estado</label>
                     <select name="estado" required>
@@ -354,13 +352,13 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel-m" onclick="closeAddModal()">Cancelar</button>
-                <button type="submit" class="btn-save" onclick="prepararDetalle()">Guardar Pedido</button>
+                <button type="button" class="btn-save" onclick="submitPedido()">Guardar Pedido</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- ═══ MODAL EDITAR ═══ -->
+<!-- MODAL EDITAR -->
 <div id="editModal" class="modal">
     <div class="modal-box">
         <div class="modal-header">
@@ -393,13 +391,12 @@
 </div>
 
 <script>
-    // ════ ESTADO ════
     let todosClientes  = [];
     let todosProductos = [];
-    let detalleItems   = []; // [{id, nombre, precio, cantidad}]
+    let detalleItems   = [];
 
-    const API_PRODUCTOS = 'http://40.82.168.11:8090/api/productos';
-    // ════ STATS ════
+    const API_PRODUCTOS = '/pedidos/detalles/listar-productos';
+
     document.addEventListener('DOMContentLoaded', () => {
         const rows = document.querySelectorAll('#tabla-body tr');
         let creado = 0, entregado = 0, cancelado = 0;
@@ -418,7 +415,6 @@
         document.getElementById('table-count').textContent    = rows.length + ' pedido(s) registrado(s)';
     });
 
-    // ════ CLIENTES ════
     function cargarClientes() {
         const drop = document.getElementById('clientesDropdown');
         drop.innerHTML = '<div class="no-items">Cargando...</div>';
@@ -431,7 +427,7 @@
 
     function filtrarClientes(q) {
         if (todosClientes.length === 0) { cargarClientes(); return; }
-        const f = q ? todosClientes.filter(c => (c.nombre+' '+c.apellido+c.cedula).toLowerCase().includes(q.toLowerCase())) : todosClientes;
+        const f = q ? todosClientes.filter(c => (c.nombre+' '+c.apellido+c.cedula+(c.telefono||'')+(c.correo||'')).toLowerCase().includes(q.toLowerCase())) : todosClientes;
         renderClientes(f);
     }
 
@@ -440,19 +436,19 @@
         drop.classList.add('show');
         if (!lista.length) { drop.innerHTML = '<div class="no-items">No se encontraron clientes</div>'; return; }
         drop.innerHTML = lista.map(c => `
-            <div class="drop-item" onclick="seleccionarCliente(${c.id},'${c.nombre}','${c.apellido}','${c.cedula}')">
+            <div class="drop-item" onclick="seleccionarCliente(${c.id},'${c.nombre}','${c.apellido}','${c.cedula}','${c.telefono || ''}','${c.correo || ''}')">
                 <div class="drop-avatar">${c.nombre[0]}${c.apellido[0]}</div>
                 <div class="drop-info">
                     <div class="name">${c.nombre} ${c.apellido}</div>
-                    <div class="sub">Cédula: ${c.cedula}</div>
+                    <div class="sub">Cédula: ${c.cedula} · ${c.telefono || ''}</div>
                 </div>
             </div>`).join('');
     }
 
-    function seleccionarCliente(id, nombre, apellido, cedula) {
+    function seleccionarCliente(id, nombre, apellido, cedula, telefono, correo) {
         document.getElementById('clienteIdInput').value = id;
         document.getElementById('selNombre').textContent = nombre + ' ' + apellido;
-        document.getElementById('selCedula').textContent = 'Cédula: ' + cedula;
+        document.getElementById('selCedula').textContent = 'Cédula: ' + cedula + (telefono ? ' · ' + telefono : '');
         document.getElementById('selAvatar').textContent = nombre[0] + apellido[0];
         document.getElementById('clienteSeleccionado').classList.add('show');
         document.getElementById('clientesDropdown').classList.remove('show');
@@ -464,7 +460,6 @@
         document.getElementById('clienteSeleccionado').classList.remove('show');
     }
 
-    // ════ PRODUCTOS ════
     function cargarProductos() {
         const drop = document.getElementById('productosDropdown');
         drop.innerHTML = '<div class="no-items">Cargando productos...</div>';
@@ -472,7 +467,6 @@
         fetch(API_PRODUCTOS)
             .then(r => r.json())
             .then(data => {
-                // Soporte para {data:[...]} o array directo
                 todosProductos = Array.isArray(data) ? data : (data.data || data.productos || []);
                 renderProductos(todosProductos);
             })
@@ -490,7 +484,12 @@
         drop.classList.add('show');
         if (!lista.length) { drop.innerHTML = '<div class="no-items">No se encontraron productos</div>'; return; }
         drop.innerHTML = lista.map(p => `
-            <div class="drop-item" onclick="agregarProducto(${p.id},'${escapar(p.nombre)}',${p.precio},${p.stock || 99})">
+            <div class="drop-item"
+                 data-id="${p.id_producto || p.id}"
+                 data-nombre="${p.nombre.replace(/"/g, '&quot;')}"
+                 data-precio="${p.precio}"
+                 data-stock="${p.stock || 99}"
+                 onclick="agregarProductoDesdeEl(this)">
                 <div class="drop-avatar prod">📦</div>
                 <div class="drop-info">
                     <div class="name">${p.nombre}</div>
@@ -499,19 +498,25 @@
             </div>`).join('');
     }
 
+    function agregarProductoDesdeEl(el) {
+        const id     = parseInt(el.dataset.id);
+        const nombre = el.dataset.nombre;
+        const precio = parseFloat(el.dataset.precio);
+        const stock  = parseInt(el.dataset.stock) || 99;
+        agregarProducto(id, nombre, precio, stock);
+    }
+
     function escapar(s) { return s.replace(/'/g, "\\'"); }
 
-    // ════ DETALLE PEDIDO ════
     function agregarProducto(id, nombre, precio, stock) {
         document.getElementById('productosDropdown').classList.remove('show');
         document.getElementById('searchProducto').value = '';
-
         const existe = detalleItems.find(i => i.id === id);
         if (existe) {
             if (existe.cantidad < stock) { existe.cantidad++; }
             else { showToast('⚠️ Stock máximo alcanzado'); }
         } else {
-            detalleItems.push({ id, nombre, precio: parseFloat(precio), cantidad: 1, stock });
+            detalleItems.push({ productoId: id, id, nombre, precio: parseFloat(precio), cantidad: 1, stock });
         }
         renderDetalle();
     }
@@ -519,10 +524,8 @@
     function renderDetalle() {
         const wrap  = document.getElementById('detalleWrap');
         const tbody = document.getElementById('detalleTabla');
-
         if (detalleItems.length === 0) { wrap.style.display = 'none'; tbody.innerHTML = ''; actualizarTotal(); return; }
         wrap.style.display = 'block';
-
         tbody.innerHTML = detalleItems.map((item, i) => `
             <tr>
                 <td style="font-weight:500">${item.nombre}</td>
@@ -538,7 +541,6 @@
                     <button type="button" class="btn-remove" onclick="quitarProducto(${i})">🗑</button>
                 </td>
             </tr>`).join('');
-
         actualizarTotal();
     }
 
@@ -564,7 +566,19 @@
         document.getElementById('detalleInput').value = JSON.stringify(detalleItems);
     }
 
-    // ════ MODALES ════
+    function submitPedido() {
+        // 1. Validar cliente
+        const clienteId = document.getElementById('clienteIdInput').value;
+        if (!clienteId) {
+            showToast('⚠️ Selecciona un cliente antes de guardar');
+            return;
+        }
+        // 2. Escribir detalle en hidden input ANTES de enviar
+        document.getElementById('detalleInput').value = JSON.stringify(detalleItems);
+        // 3. Ahora sí enviar el formulario
+        document.getElementById('formAgregar').submit();
+    }
+
     function openAddModal()  { document.getElementById('addModal').classList.add('open'); }
     function closeAddModal() {
         document.getElementById('addModal').classList.remove('open');
@@ -583,7 +597,6 @@
     }
     function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
 
-    // Cerrar dropdowns al click fuera
     document.addEventListener('click', e => {
         if (!e.target.closest('#searchCliente') && !e.target.closest('#clientesDropdown') && !e.target.closest('.btn-buscar'))
             document.getElementById('clientesDropdown').classList.remove('show');

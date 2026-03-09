@@ -2,6 +2,7 @@ package com.microservicio.microserviciopedidos.entidad;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,10 +22,21 @@ public class Pedido {
     @Column(name = "cliente_id", nullable = false)
     private Long clienteId;
 
-    // 🔥 RELACIÓN CON DETALLE
+    // RELACIÓN CON DETALLE
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetallePedido> detalles;
+    private List<DetallePedido> detalles = new ArrayList<>(); // Inicializar la lista
 
+    //MÉTODO HELPER: Agrega un detalle y establece la relación bidireccional
+    public void addDetalle(DetallePedido detalle) {
+        detalles.add(detalle);
+        detalle.setPedido(this); // ¡ESTA LÍNEA ES CRÍTICA!
+    }
+
+    // MÉTODO HELPER: Elimina un detalle
+    public void removeDetalle(DetallePedido detalle) {
+        detalles.remove(detalle);
+        detalle.setPedido(null);
+    }
     // 🔹 Constructor vacío (OBLIGATORIO)
     public Pedido() {}
 
