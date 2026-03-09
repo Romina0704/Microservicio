@@ -9,7 +9,6 @@
         <version>4.0.2</version>
         <relativePath/>
 
-        <version>3.2.5</version>
 
     </parent>
     <groupId>com.microservicio</groupId>
