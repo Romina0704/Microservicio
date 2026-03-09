@@ -1,13 +1,16 @@
 package com.microservicio.microserviciopedidos.entidad;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "detalle_pedido")
+
 public class DetallePedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     @Column(name = "producto_id", nullable = false)
@@ -22,6 +25,7 @@ public class DetallePedido {
     // 🔥 RELACIÓN CON PEDIDO
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
+    @JsonIgnore
     private Pedido pedido;
 
     // 🔹 Constructor vacío

@@ -6,8 +6,13 @@ public class ClienteDTO {
     private String nombre;
     private String apellido;
     private String cedula;
+    private String correo;
+    private String telefono;
+    private String direccion;
+    private Integer edad;
+    private String estado;
 
-    // getters y setters
+    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -19,4 +24,19 @@ public class ClienteDTO {
 
     public String getCedula() { return cedula; }
     public void setCedula(String cedula) { this.cedula = cedula; }
+
+    public String getCorreo() { return correo; }
+    public void setCorreo(String correo) { this.correo = correo; }
+
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+
+    public Integer getEdad() { return edad; }
+    public void setEdad(Integer edad) { this.edad = edad; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 }

@@ -4,6 +4,7 @@ import com.microservicio.microserviciopedidos.entidad.DetallePedido;
 import com.microservicio.microserviciopedidos.entidad.Pedido;
 import com.microservicio.microserviciopedidos.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,10 +18,17 @@ public class PedidoService {
         this.pedidoRepository = pedidoRepository;
     }
 
+    @Transactional
     public Pedido crearPedido(Pedido pedido) {
         if (pedido.getFechaPedido() == null) {
             pedido.setFechaPedido(LocalDate.now());
         }
+
+        // ✅ Solo establece la relación, NO limpies ni reasignes
+        for (DetallePedido detalle : pedido.getDetalles()) {
+            detalle.setPedido(pedido);
+        }
+
         return pedidoRepository.save(pedido);
     }
 
@@ -43,5 +51,16 @@ public class PedidoService {
         }
 
         return pedidoRepository.save(pedido);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Pedido obtenerPedidoConDetalles(Long id) {
+        Pedido pedido = pedidoRepository.findById(id).orElse(null);
+        if (pedido != null) {
+            // Fuerza la carga de los detalles (evita LazyInitializationException)
+            pedido.getDetalles().size();
+        }
+        return pedido;
     }
 }

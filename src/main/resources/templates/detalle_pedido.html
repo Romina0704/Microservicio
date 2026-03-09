@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Pedido</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #1c2333;
+            --border: #30363d;
+            --accent: #f0a500;
+            --text: #e6edf3;
+            --muted: #7d8590;
+            --green: #3fb950;
+            --red: #f85149;
+            --blue: #58a6ff;
+            --purple: #a371f7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 64px;
+            background: var(--surface); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 0; gap: 28px; z-index: 10;
+        }
+        .sidebar-logo {
+            width: 36px; height: 36px; background: var(--accent); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Fraunces', serif; font-weight: 700; color: var(--bg); font-size: 1.1rem;
+        }
+        .sidebar-icon {
+            width: 38px; height: 38px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--muted); transition: all 0.2s;
+            font-size: 1.1rem; text-decoration: none;
+        }
+        .sidebar-icon:hover, .sidebar-icon.active { background: var(--surface2); color: var(--accent); }
+
+        /* ── Main ── */
+        .main { margin-left: 64px; padding: 32px 36px; max-width: 1100px; }
+
+        /* ── Topbar ── */
+        .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; }
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+        .btn-back {
+            background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+            border-radius: 8px; padding: 9px 14px; font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem; cursor: pointer; display: flex; align-items: center;
+            gap: 6px; transition: all 0.2s; text-decoration: none;
+        }
+        .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+        .topbar-left h1 { font-family: 'Fraunces', serif; font-size: 1.9rem; font-weight: 700; line-height: 1; }
+        .topbar-left p { color: var(--muted); font-size: 0.82rem; margin-top: 5px; }
+
+        /* Badge estado */
+        .badge { padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+        .badge-creado     { background: rgba(240,165,0,0.15);   color: #f0a500; }
+        .badge-confirmado { background: rgba(163,113,247,0.15); color: #a371f7; }
+        .badge-entregado  { background: rgba(63,185,80,0.15);   color: #3fb950; }
+        .badge-cancelado  { background: rgba(248,81,73,0.15);   color: #f85149; }
+
+        /* ── Grid principal ── */
+        .layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden;
+        }
+        .card-header {
+            padding: 18px 22px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .card-header h3 { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; }
+        .card-icon { font-size: 1rem; }
+        .card-body { padding: 20px 22px; }
+
+        /* ── Info pedido ── */
+        .info-row { display: flex; flex-direction: column; gap: 14px; }
+        .info-item label {
+            font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--muted); font-weight: 500; display: block; margin-bottom: 4px;
+        }
+        .info-item .value { font-size: 0.9rem; font-weight: 500; color: var(--text); }
+        .info-item .value.accent { color: var(--accent); }
+        .info-item .value.blue   { color: var(--blue); }
+
+        /* ── Cliente card ── */
+        .cliente-header {
+            display: flex; align-items: center; gap: 14px;
+            padding: 18px 22px; border-bottom: 1px solid var(--border);
+        }
+        .cliente-avatar {
+            width: 46px; height: 46px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #e08a00);
+            color: var(--bg); font-size: 1rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .cliente-info h4 { font-size: 1rem; font-weight: 600; }
+        .cliente-info p  { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+        /* ── Productos table ── */
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            padding: 11px 18px; text-align: left; font-size: 0.68rem;
+            text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+            font-weight: 500; border-bottom: 1px solid var(--border); background: var(--surface2);
+        }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface2); }
+        tbody td { padding: 13px 18px; font-size: 0.875rem; vertical-align: middle; }
+
+        .prod-chip { display: inline-flex; align-items: center; gap: 8px; }
+        .prod-avatar {
+            width: 30px; height: 30px; border-radius: 6px;
+            background: rgba(63,185,80,0.15); border: 1px solid rgba(63,185,80,0.3);
+            color: var(--green); font-size: 0.85rem;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .prod-name { font-size: 0.875rem; font-weight: 500; }
+        .prod-id   { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+
+        .qty-pill {
+            background: var(--surface2); border: 1px solid var(--border);
+            color: var(--text); font-size: 0.78rem; font-weight: 600;
+            padding: 3px 10px; border-radius: 20px; display: inline-block;
+        }
+
+        /* ── Total footer ── */
+        .total-section {
+            padding: 16px 18px; background: var(--surface2);
+            border-top: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .total-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 600; }
+        .total-value { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+
+        /* ── Divider ── */
+        .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+        /* ── Empty state ── */
+        .empty { padding: 32px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<div class="sidebar">
+    <div class="sidebar-logo">P</div>
+    <a href="/pedidos"     class="sidebar-icon active" title="Pedidos">📦</a>
+    <a href="#"    class="sidebar-icon"        title="Clientes">👥</a>
+    <a href="/proveedores" class="sidebar-icon"        title="Proveedores">🏭</a>
+    <a href="/reportes"    class="sidebar-icon"        title="Reportes">📊</a>
+</div>
+
+<div class="main">
+
+    <!-- ── Topbar ── -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <a href="/pedidos" class="btn-back">← Volver</a>
+            <div>
+                <h1>Detalle del Pedido</h1>
+                <p>Información completa de la orden</p>
+            </div>
+        </div>
+        <!-- Badge estado -->
+        <span th:text="${pedido.estado}"
+              th:class="'badge badge-' + ${#strings.toLowerCase(pedido.estado)}">
+        </span>
+    </div>
+
+    <div class="layout">
+
+        <!-- ══ Columna izquierda ══ -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+
+            <!-- Info del pedido -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📋</span>
+                    <h3>Información del Pedido</h3>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <div class="info-item">
+                            <label>ID del Pedido</label>
+                            <div class="value accent" th:text="'#' + ${pedido.id}">—</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Fecha</label>
+                            <div class="value" th:text="${pedido.fechaPedido}">—</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Estado</label>
+                            <span th:text="${pedido.estado}"
+                                  th:class="'badge badge-' + ${#strings.toLowerCase(pedido.estado)}">
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <label>Productos distintos</label>
+                            <div class="value" th:text="${#lists.size(pedido.detalles)}">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info del cliente -->
+            <div class="card">
+                <div class="cliente-header">
+                    <div class="cliente-avatar">C</div>
+                    <div class="cliente-info">
+                        <h4 id="clienteNombre">Cargando...</h4>
+                        <p id="clienteCedula" th:attr="data-id=${pedido.clienteId}">ID: <span th:text="${pedido.clienteId}"></span></p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+
+                        <div class="info-item">
+                            <label>Teléfono</label>
+                            <div class="value" id="clienteTelefono">—</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Correo</label>
+                            <div class="value blue" id="clienteCorreo">—</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ══ Columna derecha: productos ══ -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-icon">🖥️</span>
+                <h3>Productos del Pedido</h3>
+            </div>
+
+            <!-- Tabla de productos -->
+            <table>
+                <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th style="text-align:center">Cant.</th>
+                    <th style="text-align:right">Precio Unit.</th>
+                    <th style="text-align:right">Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="det : ${pedido.detalles}">
+                    <td>
+                        <div class="prod-chip">
+                            <div class="prod-avatar">📦</div>
+                            <div>
+                                <!-- Si tienes el nombre del producto desde el microservicio -->
+                                <div class="prod-name"
+                                     th:text="${nombresProductos != null and nombresProductos[det.productoId] != null
+                                                    ? nombresProductos[det.productoId]
+                                                    : 'Producto #' + det.productoId}">
+                                </div>
+                                <div class="prod-id" th:text="'ID: ' + ${det.productoId}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:center">
+                        <span class="qty-pill" th:text="${det.cantidad}">0</span>
+                    </td>
+                    <td style="text-align:right; color:var(--muted);"
+                        th:text="'$' + ${#numbers.formatDecimal(det.precio, 1, 2)}">$0.00</td>
+                    <td style="text-align:right; font-weight:600; color:var(--accent);"
+                        class="subtotal-cell"
+                        th:attr="data-subtotal=${det.precio * det.cantidad}"
+                        th:text="'$' + ${#numbers.formatDecimal(det.precio * det.cantidad, 1, 2)}">$0.00</td>
+                </tr>
+
+                <!-- Empty state si no hay detalles -->
+                <tr th:if="${#lists.isEmpty(pedido.detalles)}">
+                    <td colspan="4" class="empty">No hay productos registrados en este pedido.</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Total -->
+            <div class="total-section">
+                <span class="total-label">Total del Pedido</span>
+                <span class="total-value" id="totalPedido">$0.00</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Calcular total sumando subtotales de la tabla
+        let total = 0;
+        document.querySelectorAll('.subtotal-cell').forEach(cell => {
+            const val = parseFloat(cell.dataset.subtotal || 0);
+            total += val;
+        });
+        const el = document.getElementById('totalPedido');
+        if (el) el.textContent = '$' + total.toFixed(2);
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+        const clienteIdEl = document.getElementById('clienteCedula');
+        const clienteId = clienteIdEl ? clienteIdEl.dataset.id : null;
+        if (!clienteId) return;
+
+        fetch('/pedidos/listar-clientes')
+            .then(r => r.json())
+            .then(clientes => {
+                const c = clientes.find(x => String(x.id) === String(clienteId));
+                if (!c) return;
+                document.getElementById('clienteNombre').textContent = c.nombre + ' ' + c.apellido;
+                document.getElementById('clienteCedula').textContent = 'Cédula: ' + c.cedula;
+
+                const tel = document.getElementById('clienteTelefono');
+                if (tel) tel.textContent = c.telefono || '—';
+                const cor = document.getElementById('clienteCorreo');
+                if (cor) cor.textContent = c.correo || '—';
+                document.querySelector('.cliente-avatar').textContent =
+                    c.nombre[0].toUpperCase() + c.apellido[0].toUpperCase();
+            })
+            .catch(() => {
+                document.getElementById('clienteNombre').textContent = 'Cliente #' + clienteId;
+            });
+    });
+</script>
+</body>
+</html>
