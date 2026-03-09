@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Proveedores</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #1c2333;
+            --border: #30363d;
+            --accent: #f0a500;
+            --text: #e6edf3;
+            --muted: #7d8590;
+            --green: #3fb950;
+            --red: #f85149;
+            --blue: #58a6ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 64px;
+            background: var(--surface); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 0; gap: 28px; z-index: 10;
+        }
+        .sidebar-logo {
+            width: 36px; height: 36px; background: var(--accent); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Fraunces', serif; font-weight: 700; color: var(--bg); font-size: 1.1rem;
+        }
+        .sidebar-icon {
+            width: 38px; height: 38px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--muted); transition: all 0.2s; font-size: 1.1rem; text-decoration: none;
+        }
+        .sidebar-icon:hover, .sidebar-icon.active { background: var(--surface2); color: var(--accent); }
+
+        /* ── Layout ── */
+        .main { margin-left: 64px; padding: 32px 36px; }
+
+        .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; }
+        .topbar-left h1 { font-family: 'Fraunces', serif; font-size: 1.9rem; font-weight: 700; line-height: 1; }
+        .topbar-left p { color: var(--muted); font-size: 0.82rem; margin-top: 5px; }
+
+        .btn-new {
+            background: var(--accent); color: var(--bg); border: none; border-radius: 8px;
+            padding: 11px 20px; font-family: 'DM Sans', sans-serif; font-weight: 600;
+            font-size: 0.88rem; cursor: pointer; display: flex; align-items: center;
+            gap: 7px; transition: all 0.2s;
+        }
+        .btn-new:hover { background: #f5b830; transform: translateY(-1px); }
+
+        /* ── Stats ── */
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+        .stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+        .stat-value { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 600; line-height: 1; }
+
+        /* ── Table ── */
+        .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .table-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .table-toolbar span { font-size: 0.85rem; color: var(--muted); }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            padding: 12px 20px; text-align: left; font-size: 0.72rem;
+            text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+            font-weight: 500; border-bottom: 1px solid var(--border); background: var(--surface2);
+        }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface2); }
+        tbody td { padding: 14px 20px; font-size: 0.875rem; vertical-align: middle; }
+
+        .id-pill {
+            background: var(--surface2); border: 1px solid var(--border);
+            color: var(--muted); font-size: 0.72rem; font-weight: 600;
+            padding: 3px 9px; border-radius: 20px;
+        }
+
+        /* Empresa chip */
+        .prov-chip { display: inline-flex; align-items: center; gap: 10px; }
+        .prov-avatar {
+            width: 34px; height: 34px; border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), #e08a00);
+            color: var(--bg); font-size: 0.7rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            text-transform: uppercase;
+        }
+        .prov-name { font-size: 0.875rem; font-weight: 600; }
+
+        /* Contacto */
+        .ruc-cell { font-size: 0.82rem; color: var(--muted); font-weight: 600; font-family: monospace; letter-spacing: 0.5px; }
+        .phone-cell { font-size: 0.85rem; color: var(--text); }
+        .email-cell { font-size: 0.82rem; color: var(--blue); }
+
+        /* Activo badge */
+        .badge-activo   { background: rgba(63,185,80,0.15);  color: #3fb950; }
+        .badge-inactivo { background: rgba(248,81,73,0.15);  color: #f85149; }
+        .toggle-wrap { display:flex; align-items:center; gap:10px; margin-top:4px; }
+        .toggle { appearance:none; width:40px; height:22px; background:var(--border); border-radius:20px; cursor:pointer; position:relative; transition:background .2s; flex-shrink:0; }
+        .toggle:checked { background:var(--green); }
+        .toggle::after { content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; background:#fff; border-radius:50%; transition:left .2s; }
+        .toggle:checked::after { left:21px; }
+        .toggle-label { font-size:0.82rem; color:var(--muted); }
+
+        /* Botones acción */
+        .btn-action {
+            background: none; border: 1px solid var(--border); color: var(--muted);
+            border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 0.8rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s; margin-right: 4px; text-decoration: none; display: inline-block;
+        }
+        .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-action.del:hover { border-color: var(--red); color: var(--red); }
+
+        /* ── Modal ── */
+        .modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.75); z-index: 1000;
+            align-items: center; justify-content: center; backdrop-filter: blur(4px);
+        }
+        .modal.open { display: flex; }
+        .modal-box {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+            width: 92%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+            animation: modalIn 0.25s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to   { opacity: 1; transform: scale(1)    translateY(0);     }
+        }
+
+        .modal-header {
+            padding: 22px 26px 18px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; background: var(--surface); z-index: 1;
+        }
+        .modal-header h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 600; }
+        .modal-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; transition: color 0.15s; }
+        .modal-close:hover { color: var(--text); }
+
+        .modal-body { padding: 22px 26px; }
+
+        .field { margin-bottom: 16px; }
+        .field label {
+            display: block; font-size: 0.72rem; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--muted); margin-bottom: 7px; font-weight: 500;
+        }
+        .field input {
+            width: 100%; background: var(--bg); border: 1px solid var(--border);
+            border-radius: 7px; padding: 11px 14px; color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s;
+        }
+        .field input:focus { border-color: var(--accent); }
+        .field input::placeholder { color: var(--muted); }
+
+        .modal-footer {
+            padding: 16px 26px 22px; display: flex; gap: 10px; justify-content: flex-end;
+            position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--border);
+        }
+        .btn-save {
+            background: var(--accent); color: var(--bg); border: none; border-radius: 7px;
+            padding: 11px 24px; font-family: 'DM Sans', sans-serif; font-weight: 600;
+            font-size: 0.88rem; cursor: pointer; transition: background 0.2s;
+        }
+        .btn-save:hover { background: #f5b830; }
+        .btn-cancel-m {
+            background: var(--surface2); color: var(--muted); border: 1px solid var(--border);
+            border-radius: 7px; padding: 11px 18px; font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem; cursor: pointer; transition: all 0.15s;
+        }
+        .btn-cancel-m:hover { color: var(--text); }
+
+        /* Confirm */
+        .confirm-icon { font-size: 2.2rem; text-align: center; margin-bottom: 12px; }
+        .confirm-msg  { text-align: center; font-size: 0.92rem; color: var(--muted); margin-bottom: 8px; line-height: 1.6; }
+        .confirm-msg strong { color: var(--text); }
+        .btn-danger {
+            background: var(--red); color: #fff; border: none; border-radius: 7px;
+            padding: 11px 24px; font-family: 'DM Sans', sans-serif; font-weight: 600;
+            font-size: 0.88rem; cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn-danger:hover { opacity: 0.85; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px; background: var(--surface);
+            border: 1px solid var(--border); color: var(--text); padding: 12px 18px;
+            border-radius: 8px; font-size: 0.85rem; opacity: 0; transform: translateY(8px);
+            transition: all 0.3s; z-index: 9999; pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- ── Sidebar ── -->
+<div class="sidebar">
+    <div class="sidebar-logo">P</div>
+    <a href="/pedidos"     class="sidebar-icon"        title="Pedidos">📦</a>
+    <a href="#"    class="sidebar-icon"        title="Clientes">👥</a>
+    <a href="/proveedores" class="sidebar-icon active" title="Proveedores">🏭</a>
+    <a href="/reportes"    class="sidebar-icon"        title="Reportes">📊</a>
+</div>
+
+<div class="main">
+
+    <!-- ── Topbar ── -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>Proveedores</h1>
+            <p>Gestión y control de proveedores</p>
+        </div>
+        <button class="btn-new" onclick="openAddModal()">＋ Nuevo Proveedor</button>
+    </div>
+
+    <!-- ── Stats ── -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-label">Total</div>
+            <div class="stat-value" id="stat-total" style="color:var(--text)">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Activos</div>
+            <div class="stat-value" id="stat-activos" style="color:var(--green)">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Inactivos</div>
+            <div class="stat-value" id="stat-inactivos" style="color:var(--red)">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Registro</div>
+            <div class="stat-value" style="color:var(--muted); font-size:0.78rem; font-family:'DM Sans',sans-serif; font-weight:400; margin-top:4px;">Empresas proveedoras</div>
+        </div>
+    </div>
+
+    <!-- ── Tabla ── -->
+    <div class="table-card">
+        <div class="table-toolbar">
+            <span id="table-count">Cargando proveedores...</span>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Empresa</th>
+                <th>RUC</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="tabla-body">
+            <tr th:each="proveedor, iterStat : ${proveedores}">
+
+                <td><span class="id-pill" th:text="${iterStat.count}"></span></td>
+
+                <td>
+                    <div class="prov-chip">
+                        <div class="prov-avatar"
+                             th:text="${#strings.length(proveedor.nombre) >= 2
+                                            ? #strings.toUpperCase(#strings.substring(proveedor.nombre,0,2))
+                                            : #strings.toUpperCase(proveedor.nombre)}">
+                        </div>
+                        <span class="prov-name" th:text="${proveedor.nombre}">—</span>
+                    </div>
+                </td>
+
+                <td><span class="ruc-cell" th:text="${proveedor.ruc}">—</span></td>
+
+                <td><span class="phone-cell" th:text="${proveedor.telefono}">—</span></td>
+
+                <td><span class="email-cell" th:text="${proveedor.email}">—</span></td>
+
+                <td>
+                    <span th:if="${proveedor.activo}"   class="badge badge-activo">Activo</span>
+                    <span th:unless="${proveedor.activo}" class="badge badge-inactivo">Inactivo</span>
+                </td>
+
+                <td>
+                    <button class="btn-action"
+                            th:data-id="${proveedor.id}"
+                            th:data-nombre="${proveedor.nombre}"
+                            th:data-ruc="${proveedor.ruc}"
+                            th:data-telefono="${proveedor.telefono}"
+                            th:data-email="${proveedor.email}"
+                            th:data-activo="${proveedor.activo}"
+                            onclick="openEditModal(this)">
+                        ✏️ Editar
+                    </button>
+                    <button class="btn-action del"
+                            th:data-id="${proveedor.id}"
+                            th:data-nombre="${proveedor.nombre}"
+                            onclick="openConfirmDelete(this)">
+                        🗑️
+                    </button>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ═══ MODAL AGREGAR ═══ -->
+<div id="addModal" class="modal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Nuevo Proveedor</h3>
+            <button class="modal-close" onclick="closeAddModal()">✕</button>
+        </div>
+        <form th:action="@{/proveedores/agregar}" method="post">
+            <div class="modal-body">
+                <div class="field">
+                    <label>Nombre de la Empresa *</label>
+                    <input type="text" name="nombre" placeholder="Ej: Distribuidora XYZ S.A." required>
+                </div>
+                <div class="field">
+                    <label>RUC *</label>
+                    <input type="text" name="ruc" placeholder="0000000000001" maxlength="13" required>
+                </div>
+                <div class="field">
+                    <label>Teléfono</label>
+                    <input type="text" name="telefono" placeholder="+593 99 000 0000">
+                </div>
+                <div class="field">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="email" placeholder="contacto@empresa.com">
+                </div>
+                <div class="field">
+                    <label>Estado</label>
+                    <div class="toggle-wrap">
+                        <input type="hidden" name="activo" id="addActivoHidden" value="true">
+                        <input type="checkbox" class="toggle" id="addActivo" checked>
+                        <span class="toggle-label" id="addActivoLabel">Activo</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeAddModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Proveedor</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ═══ MODAL EDITAR ═══ -->
+<div id="editModal" class="modal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Editar Proveedor</h3>
+            <button class="modal-close" onclick="closeEditModal()">✕</button>
+        </div>
+        <form th:action="@{/proveedores/editar}" method="post">
+            <div class="modal-body">
+                <input type="hidden" name="id" id="editId">
+                <div class="field">
+                    <label>Nombre de la Empresa *</label>
+                    <input type="text" name="nombre" id="editNombre" required>
+                </div>
+                <div class="field">
+                    <label>RUC *</label>
+                    <input type="text" name="ruc" id="editRuc" maxlength="13" required>
+                </div>
+                <div class="field">
+                    <label>Teléfono</label>
+                    <input type="text" name="telefono" id="editTelefono">
+                </div>
+                <div class="field">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="email" id="editEmail">
+                </div>
+                <div class="field">
+                    <label>Estado</label>
+                    <div class="toggle-wrap">
+                        <input type="hidden" name="activo" id="editActivoHidden" value="true">
+                        <input type="checkbox" class="toggle" id="editActivo">
+                        <span class="toggle-label" id="editActivoLabel">Activo</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeEditModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ═══ MODAL CONFIRMAR ELIMINAR ═══ -->
+<div id="confirmModal" class="modal">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <h3>Confirmar eliminación</h3>
+            <button class="modal-close" onclick="closeConfirmDelete()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="confirm-icon">⚠️</div>
+            <div class="confirm-msg">
+                ¿Estás seguro de eliminar a <strong id="confirmNombre">—</strong>?<br>
+                Esta acción no se puede deshacer.
+            </div>
+            <form id="confirmForm" method="post">
+                <input type="hidden" name="id" id="confirmId">
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel-m" onclick="closeConfirmDelete()">Cancelar</button>
+            <button type="button" class="btn-danger" onclick="submitDelete()">🗑️ Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── Stats al cargar ──
+    document.addEventListener('DOMContentLoaded', () => {
+        const rows = document.querySelectorAll('#tabla-body tr');
+        let activos = 0, inactivos = 0;
+        rows.forEach(r => {
+            const b = r.querySelector('.badge-activo, .badge-inactivo');
+            if (!b) return;
+            if (b.classList.contains('badge-activo')) activos++;
+            else inactivos++;
+        });
+        document.getElementById('stat-total').textContent    = rows.length;
+        document.getElementById('stat-activos').textContent  = activos;
+        document.getElementById('stat-inactivos').textContent= inactivos;
+        document.getElementById('table-count').textContent   = rows.length + ' proveedor(es) registrado(s)';
+    });
+
+    // Toggle labels
+    document.getElementById('addActivo').addEventListener('change', function() {
+        document.getElementById('addActivoHidden').value = this.checked ? 'true' : 'false';
+        document.getElementById('addActivoLabel').textContent = this.checked ? 'Activo' : 'Inactivo';
+    });
+    document.getElementById('editActivo').addEventListener('change', function() {
+        document.getElementById('editActivoHidden').value = this.checked ? 'true' : 'false';
+        document.getElementById('editActivoLabel').textContent = this.checked ? 'Activo' : 'Inactivo';
+    });
+
+    // ── Modal Agregar ──
+    function openAddModal()  { document.getElementById('addModal').classList.add('open'); }
+    function closeAddModal() { document.getElementById('addModal').classList.remove('open'); }
+
+    // ── Modal Editar ──
+    function openEditModal(btn) {
+        document.getElementById('editId').value       = btn.dataset.id       || '';
+        document.getElementById('editNombre').value   = btn.dataset.nombre   || '';
+        document.getElementById('editRuc').value      = btn.dataset.ruc      || '';
+        document.getElementById('editTelefono').value = btn.dataset.telefono || '';
+        document.getElementById('editEmail').value   = btn.dataset.email   || '';
+        const activo = btn.dataset.activo === 'true';
+        document.getElementById('editActivo').checked = activo;
+        document.getElementById('editActivoHidden').value = activo ? 'true' : 'false';
+        document.getElementById('editActivoLabel').textContent = activo ? 'Activo' : 'Inactivo';
+        document.getElementById('editModal').classList.add('open');
+    }
+    function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
+
+    // ── Modal Eliminar ──
+    let pendingDeleteId = null;
+    function openConfirmDelete(btn) {
+        pendingDeleteId = btn.dataset.id;
+        document.getElementById('confirmNombre').textContent = btn.dataset.nombre || '—';
+        document.getElementById('confirmId').value = pendingDeleteId;
+        document.getElementById('confirmModal').classList.add('open');
+    }
+    function closeConfirmDelete() {
+        document.getElementById('confirmModal').classList.remove('open');
+        pendingDeleteId = null;
+    }
+    function submitDelete() {
+        document.getElementById('confirmForm').action = '/proveedores/eliminar/' + pendingDeleteId;
+        document.getElementById('confirmForm').submit();
+    }
+
+    // ── Cerrar con ESC o clic en fondo ──
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { closeAddModal(); closeEditModal(); closeConfirmDelete(); }
+    });
+    ['addModal', 'editModal', 'confirmModal'].forEach(id => {
+        document.getElementById(id).addEventListener('click', e => {
+            if (e.target.id === id) { closeAddModal(); closeEditModal(); closeConfirmDelete(); }
+        });
+    });
+</script>
+</body>
+</html>

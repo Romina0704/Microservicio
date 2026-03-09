@@ -1,4 +1,5 @@
 package com.microservicio.microserviciopedidos.client;
+<<<<<<< HEAD
 
 import com.microservicio.microserviciopedidos.dto.ClienteDTO;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,4 +24,17 @@ public class ClienteClient {
         );
         return clientes != null ? Arrays.asList(clientes) : Collections.emptyList();
     }
+=======
+import com.microservicio.microserviciopedidos.dto.ClienteDTO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
+
+@FeignClient(name = "cliente-service", url = "http://4.206.202.17:8081")
+public interface ClienteClient {
+
+    @GetMapping("/api/clientes")
+    List<ClienteDTO> listarClientes();
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
 }
