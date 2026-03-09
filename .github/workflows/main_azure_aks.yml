@@ -24,7 +24,7 @@ jobs:
       # 3. Empaquetar el microservicio (Capa CI)
       - name: Compilar con Maven
         run: mvn clean package -DskipTests
-        working-directory: ./microservicio-demo
+        working-directory: .
 
       # 4. Autenticación en Azure Container Registry (ACR)
       - name: Login en Azure Container Registry
@@ -63,3 +63,4 @@ jobs:
             k8s/microservicio-demo-deployment.yaml
           images: |
             ${{ secrets.ACR_LOGIN_SERVER }}/ijaramillo-msdemo:latest
+
