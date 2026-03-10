@@ -24,6 +24,12 @@ public class DetallePedido {
     @Transient
     private String nombreProducto;
 
+    @Column(name = "precio_proveedor")
+    private Double precioProveedor;
+
+    @Column(name = "precio_venta")
+    private Double precioVenta;
+
     // 🔥 RELACIÓN CON PEDIDO
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
@@ -54,4 +60,9 @@ public class DetallePedido {
 
     public Pedido getPedido() { return pedido; }
     public void setPedido(Pedido pedido) { this.pedido = pedido; }
+    public Double getPrecioProveedor() { return precioProveedor; }
+    public void setPrecioProveedor(Double precioProveedor) { this.precioProveedor = precioProveedor; }
+
+    public Double getPrecioVenta() { return precioVenta; }
+    public void setPrecioVenta(Double precioVenta) { this.precioVenta = precioVenta; }
 }

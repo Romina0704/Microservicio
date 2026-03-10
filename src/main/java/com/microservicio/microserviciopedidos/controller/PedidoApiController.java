@@ -32,7 +32,7 @@ public class PedidoApiController {
             item.put("id", conDetalles.getId());
             item.put("estado", conDetalles.getEstado());
             item.put("fechaPedido", conDetalles.getFechaPedido());
-            item.put("clienteId", conDetalles.getClienteId());
+            item.put("clienteId", conDetalles.getProveedorId());
 
             List<Map<String, Object>> detalles = new ArrayList<>();
             for (DetallePedido d : conDetalles.getDetalles()) {
@@ -74,7 +74,7 @@ public class PedidoApiController {
             item.put("pedidoId", conDetalles.getId());
             item.put("fechaPedido", conDetalles.getFechaPedido());
             item.put("estado", conDetalles.getEstado());
-            item.put("clienteId", conDetalles.getClienteId());
+            item.put("clienteId", conDetalles.getProveedorId());
 
             List<Map<String, Object>> detalles = new ArrayList<>();
             double total = 0;

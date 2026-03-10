@@ -1,21 +1,8 @@
 package com.microservicio.microserviciopedidos.controller;
 
-<<<<<<< HEAD
-import com.microservicio.microserviciopedidos.client.ClienteClient;
-import com.microservicio.microserviciopedidos.dto.ClienteDTO;
-import com.microservicio.microserviciopedidos.entidad.Pedido;
-import com.microservicio.microserviciopedidos.repository.PedidoRepository;
-import com.microservicio.microserviciopedidos.service.PedidoService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-=======
-import com.microservicio.microserviciopedidos.dto.ClienteDTO;
 import com.microservicio.microserviciopedidos.dto.ProductoDTO;
 import com.microservicio.microserviciopedidos.entidad.DetallePedido;
 import com.microservicio.microserviciopedidos.entidad.Pedido;
-import com.microservicio.microserviciopedidos.service.ClienteService;
 import com.microservicio.microserviciopedidos.service.PedidoService;
 import com.microservicio.microserviciopedidos.service.ProductoService;
 import org.springframework.stereotype.Controller;
@@ -28,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
->>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
 import java.time.LocalDate;
 import java.util.List;
 
@@ -37,25 +23,14 @@ import java.util.List;
 public class PedidoController {
 
     private final PedidoService pedidoService;
-<<<<<<< HEAD
-    private final ClienteClient clienteClient;
-    private final PedidoRepository pedidoRepository;
-
-    public PedidoController(PedidoService pedidoService , ClienteClient clienteClient,  PedidoRepository pedidoRepository) {
-        this.pedidoService = pedidoService;
-        this.clienteClient = clienteClient;
-        this.pedidoRepository =pedidoRepository;
-=======
     private final ProductoService productoService;
-    private final ClienteService clienteService;
+
 
     public PedidoController(PedidoService pedidoService,
-                            ProductoService productoService,
-                            ClienteService clienteService) {
+                            ProductoService productoService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
-        this.clienteService = clienteService;
->>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
+
     }
 
     @GetMapping
@@ -63,37 +38,17 @@ public class PedidoController {
         model.addAttribute("pedidos", pedidoService.listarPedidos());
         return "pedidos";
     }
-<<<<<<< HEAD
-    // Devuelve todos los clientes (para el selector del formulario)
-    @GetMapping("/clientes")
-    @ResponseBody
-    public List<ClienteDTO> obtenerClientes() {
-        return clienteClient.listarClientes();
-    }
-
-    @PostMapping("/agregar")
-    public String agregarPedido(@ModelAttribute Pedido pedido) {
-        pedidoRepository.save(pedido);
-        return "redirect:/pedidos";
-    }
-
-=======
-
 
     @PostMapping("/agregar")
     public String agregarPedido(@RequestParam String fechaPedido,
                                 @RequestParam String estado,
-                                @RequestParam Long clienteId,
+                                @RequestParam Long proveedorId,
                                 @RequestParam(required = false) String detalle) {
-
-        System.out.println("=== PEDIDO ===");
-        System.out.println("Detalle raw: [" + detalle + "]");
-        System.out.println("==============");
 
         Pedido pedido = new Pedido();
         pedido.setFechaPedido(LocalDate.parse(fechaPedido));
         pedido.setEstado(estado);
-        pedido.setClienteId(clienteId);
+        pedido.setProveedorId(proveedorId);
 
         if (detalle != null && !detalle.isBlank()) {
             try {
@@ -101,21 +56,28 @@ public class PedidoController {
                 List<Map<String, Object>> items =
                         mapper.readValue(detalle, new TypeReference<List<Map<String, Object>>>() {});
 
-                System.out.println("Items parseados: " + items.size());
-
                 for (Map<String, Object> item : items) {
                     DetallePedido d = new DetallePedido();
 
-                    // Busca productoId, id_producto o id en ese orden
                     Object idObj = item.get("productoId");
                     if (idObj == null) idObj = item.get("id_producto");
                     if (idObj == null) idObj = item.get("id");
 
-                    System.out.println("ID encontrado: " + idObj);
-
                     d.setProductoId(Long.valueOf(idObj.toString()));
                     d.setCantidad(Integer.valueOf(item.get("cantidad").toString()));
                     d.setPrecio(Double.valueOf(item.get("precio").toString()));
+
+                    Object ppObj = item.get("precioProveedor");
+                    if (ppObj != null) d.setPrecioProveedor(Double.valueOf(ppObj.toString()));
+
+                    Object pvObj = item.get("precioVenta");
+                    if (pvObj != null) d.setPrecioVenta(Double.valueOf(pvObj.toString()));
+
+                    System.out.println("✅ Detalle → productoId=" + d.getProductoId()
+                            + " precio=" + d.getPrecio()
+                            + " precioProveedor=" + d.getPrecioProveedor()
+                            + " precioVenta=" + d.getPrecioVenta());
+
                     pedido.addDetalle(d);
                 }
 
@@ -123,60 +85,101 @@ public class PedidoController {
                 System.out.println("❌ ERROR al parsear detalle: " + e.getMessage());
                 e.printStackTrace();
             }
-        } else {
-            System.out.println("⚠️ Detalle llegó vacío o null");
         }
 
-        System.out.println("Detalles en pedido antes de guardar: " + pedido.getDetalles().size());
-        System.out.println("DETALLES EN CONTROLLER: " + pedido.getDetalles().size());
         pedidoService.crearPedido(pedido);
 
-        return "redirect:/pedidos";
-    }
-
-
->>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
-    @PostMapping("/editar")
-    public String editarPedido(@RequestParam Long id,
-                               @RequestParam String fechaPedido,
-                               @RequestParam String estado) {
-<<<<<<< HEAD
-=======
-
->>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
-        Pedido pedido = pedidoService.obtenerPorId(id);
-        if (pedido != null) {
-            pedido.setFechaPedido(LocalDate.parse(fechaPedido));
-            pedido.setEstado(estado);
-            pedidoService.crearPedido(pedido);
+        // ✅ Aumentar stock con precioVenta
+        try {
+            List<Map<String, Object>> stockItems = new ArrayList<>();
+            for (DetallePedido d : pedido.getDetalles()) {
+                Map<String, Object> item = new LinkedHashMap<>();
+                item.put("idProducto", d.getProductoId());
+                item.put("cantidad", d.getCantidad());
+                item.put("precioVenta", d.getPrecioVenta());
+                stockItems.add(item);
+            }
+            System.out.println("📦 Stock items enviados: " + stockItems);
+            productoService.aumentarStock(stockItems);
+        } catch (Exception e) {
+            System.out.println("⚠️ No se pudo aumentar stock: " + e.getMessage());
         }
-<<<<<<< HEAD
-=======
 
->>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
         return "redirect:/pedidos";
     }
 
     @PostMapping("/eliminar/{id}")
     public String eliminarPedido(@PathVariable Long id) {
+        try {
+            Pedido pedido = pedidoService.obtenerPedidoConDetalles(id);
+            if (pedido != null && !pedido.getDetalles().isEmpty()) {
+                devolverStock(pedido);
+            }
+        } catch (Exception e) {
+            System.out.println("⚠️ No se pudo reducir stock: " + e.getMessage());
+        }
         pedidoService.eliminarPedido(id);
-<<<<<<< HEAD
-        return "pedidos";
-=======
         return "redirect:/pedidos";
     }
 
+    @PostMapping("/editar")
+    public String editarPedido(@RequestParam Long id,
+                               @RequestParam String fechaPedido,
+                               @RequestParam String estado) {
+
+        Pedido pedido = pedidoService.obtenerPorId(id);
+        if (pedido != null) {
+            // Si cambia a CANCELADO, devolver stock
+            if ("CANCELADO".equals(estado) && !"CANCELADO".equals(pedido.getEstado())) {
+                try {
+                    Pedido conDetalles = pedidoService.obtenerPedidoConDetalles(id);
+                    if (conDetalles != null && !conDetalles.getDetalles().isEmpty()) {
+                        devolverStock(conDetalles);
+                    }
+                } catch (Exception e) {
+                    System.out.println("⚠️ No se pudo aumentar stock al cancelar: " + e.getMessage());
+                }
+            }
+            pedido.setFechaPedido(LocalDate.parse(fechaPedido));
+            pedido.setEstado(estado);
+            pedidoService.crearPedido(pedido);
+            // Después de pedidoService.crearPedido(pedido);
+            try {
+                List<Map<String, Object>> stockItems = new ArrayList<>();
+                for (DetallePedido d : pedido.getDetalles()) {
+                    Map<String, Object> item = new LinkedHashMap<>();
+                    item.put("idProducto", d.getProductoId());
+                    item.put("cantidad", d.getCantidad());
+                    stockItems.add(item);
+                }
+                productoService.aumentarStock(stockItems);
+            } catch (Exception e) {
+                System.out.println("⚠️ No se pudo reducir stock: " + e.getMessage());
+            }
+
+            return "redirect:/pedidos";
+        }
+
+        return "redirect:/pedidos";
+    }
+
+    // Método reutilizable para devolver stock
+    private void devolverStock(Pedido pedido) {
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (DetallePedido d : pedido.getDetalles()) {
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("idProducto", d.getProductoId());
+            item.put("cantidad", d.getCantidad());
+            items.add(item);
+        }
+        productoService.aumentarStock(items);
+    }
     @GetMapping("/detalles/listar-productos")
     @ResponseBody
     public List<ProductoDTO> listarProductos() {
         return productoService.listarProductos();
     }
 
-    @GetMapping("/listar-clientes")
-    @ResponseBody
-    public List<ClienteDTO> listarClientes() {
-        return clienteService.listarClientes();
-    }
 
     @PostMapping
     public Pedido guardar(@RequestBody Pedido pedido) {
@@ -188,8 +191,21 @@ public class PedidoController {
         Pedido pedido = pedidoService.obtenerPedidoConDetalles(id);
         if (pedido == null) return "redirect:/pedidos";
         model.addAttribute("pedido", pedido);
+
+        Map<Long, String> nombresProductos = new LinkedHashMap<>();
+        try {
+            List<ProductoDTO> productos = productoService.listarProductos();
+            for (ProductoDTO p : productos) {
+                if (p.getIdProducto() != null) {
+                    nombresProductos.put(p.getIdProducto(), p.getNombre());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("⚠️ No se pudo cargar productos: " + e.getMessage());
+        }
+
+        model.addAttribute("nombresProductos", nombresProductos);
         return "detalle_pedido";
->>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
     }
 
 }
