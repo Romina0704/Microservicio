@@ -98,6 +98,20 @@ public class PedidoController {
     }
 
 
+    @PostMapping("/eliminar/{id}")
+    public String eliminarPedido(@PathVariable Long id) {
+        try {
+            Pedido pedido = pedidoService.obtenerPedidoConDetalles(id);
+            if (pedido != null && !pedido.getDetalles().isEmpty()) {
+                devolverStock(pedido);
+            }
+        } catch (Exception e) {
+            System.out.println("⚠️ No se pudo aumentar stock: " + e.getMessage());
+        }
+        pedidoService.eliminarPedido(id);
+        return "redirect:/pedidos";
+    }
+
     @PostMapping("/editar")
     public String editarPedido(@RequestParam Long id,
                                @RequestParam String fechaPedido,
@@ -105,6 +119,17 @@ public class PedidoController {
 
         Pedido pedido = pedidoService.obtenerPorId(id);
         if (pedido != null) {
+            // Si cambia a CANCELADO, devolver stock
+            if ("CANCELADO".equals(estado) && !"CANCELADO".equals(pedido.getEstado())) {
+                try {
+                    Pedido conDetalles = pedidoService.obtenerPedidoConDetalles(id);
+                    if (conDetalles != null && !conDetalles.getDetalles().isEmpty()) {
+                        devolverStock(conDetalles);
+                    }
+                } catch (Exception e) {
+                    System.out.println("⚠️ No se pudo aumentar stock al cancelar: " + e.getMessage());
+                }
+            }
             pedido.setFechaPedido(LocalDate.parse(fechaPedido));
             pedido.setEstado(estado);
             pedidoService.crearPedido(pedido);
@@ -113,12 +138,17 @@ public class PedidoController {
         return "redirect:/pedidos";
     }
 
-    @PostMapping("/eliminar/{id}")
-    public String eliminarPedido(@PathVariable Long id) {
-        pedidoService.eliminarPedido(id);
-        return "redirect:/pedidos";
+    // Método reutilizable para devolver stock
+    private void devolverStock(Pedido pedido) {
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (DetallePedido d : pedido.getDetalles()) {
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("idProducto", d.getProductoId());
+            item.put("cantidad", d.getCantidad());
+            items.add(item);
+        }
+        productoService.aumentarStock(items);
     }
-
     @GetMapping("/detalles/listar-productos")
     @ResponseBody
     public List<ProductoDTO> listarProductos() {
@@ -141,6 +171,20 @@ public class PedidoController {
         Pedido pedido = pedidoService.obtenerPedidoConDetalles(id);
         if (pedido == null) return "redirect:/pedidos";
         model.addAttribute("pedido", pedido);
+
+        Map<Long, String> nombresProductos = new LinkedHashMap<>();
+        try {
+            List<ProductoDTO> productos = productoService.listarProductos();
+            for (ProductoDTO p : productos) {
+                if (p.getIdProducto() != null) {
+                    nombresProductos.put(p.getIdProducto(), p.getNombre());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("⚠️ No se pudo cargar productos: " + e.getMessage());
+        }
+
+        model.addAttribute("nombresProductos", nombresProductos);
         return "detalle_pedido";
     }
 

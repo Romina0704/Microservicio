@@ -25,6 +25,12 @@ public class Pedido {
     // RELACIÓN CON DETALLE
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePedido> detalles = new ArrayList<>(); // Inicializar la lista
+    @Transient
+    public Double getTotal() {
+        return detalles.stream()
+                .mapToDouble(d -> d.getPrecio() * d.getCantidad())
+                .sum();
+    }
 
     //MÉTODO HELPER: Agrega un detalle y establece la relación bidireccional
     public void addDetalle(DetallePedido detalle) {

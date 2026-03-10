@@ -4,14 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProductoDTO {
 
-    @JsonProperty("id_producto")  // ← mapea el campo correcto
-    private Long id;
+    @JsonProperty("id_producto")
+    private Long idProducto;
+
     private String nombre;
     private Double precio;
-    private Integer stock;        // ← agrega stock también
+    private Integer stock;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getIdProducto() { return idProducto; }
+    public void setIdProducto(Long idProducto) { this.idProducto = idProducto; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

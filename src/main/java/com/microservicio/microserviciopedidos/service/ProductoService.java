@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductoService {
@@ -25,8 +26,11 @@ public class ProductoService {
     public ProductoDTO obtenerProductoPorId(Long id) {
         return productoClient.listarProductos()
                 .stream()
-                .filter(p -> p.getId().equals(id))
+                .filter(p -> p.getIdProducto() != null && p.getIdProducto().equals(id))
                 .findFirst()
                 .orElse(null);
+    }
+    public void aumentarStock(List<Map<String, Object>> items) {
+        productoClient.aumentarStock(items);
     }
 }

@@ -5,12 +5,10 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "detalle_pedido")
-
 public class DetallePedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
 
     @Column(name = "producto_id", nullable = false)
@@ -22,6 +20,10 @@ public class DetallePedido {
     @Column(nullable = false)
     private Double precio;
 
+    // ← NUEVO: nombre del producto (no se guarda en BD)
+    @Transient
+    private String nombreProducto;
+
     // 🔥 RELACIÓN CON PEDIDO
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
@@ -32,40 +34,24 @@ public class DetallePedido {
     public DetallePedido() {}
 
     // 🔹 Getters y Setters
+    public Long getId() { return id; }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getProductoId() { return productoId; }
+    public void setProductoId(Long productoId) { this.productoId = productoId; }
 
-    public Long getProductoId() {
-        return productoId;
-    }
+    public Integer getCantidad() { return cantidad; }
+    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
 
-    public void setProductoId(Long productoId) {
-        this.productoId = productoId;
-    }
+    public Double getPrecio() { return precio; }
+    public void setPrecio(Double precio) { this.precio = precio; }
 
-    public Integer getCantidad() {
-        return cantidad;
-    }
+    public String getNombreProducto() { return nombreProducto; }
+    public void setNombreProducto(String nombreProducto) { this.nombreProducto = nombreProducto; }
 
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
+    // ← NUEVO: subtotal calculado
+    @Transient
+    public Double getSubtotal() { return precio * cantidad; }
 
-    public Double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(Double precio) {
-        this.precio = precio;
-    }
-
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
-    }
+    public Pedido getPedido() { return pedido; }
+    public void setPedido(Pedido pedido) { this.pedido = pedido; }
 }
