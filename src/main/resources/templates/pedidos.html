@@ -11,15 +11,223 @@
             --surface2: #1c2333;
             --border: #30363d;
             --accent: #f0a500;
+<<<<<<< HEAD
+            --accent2: #e05c00;
             --text: #e6edf3;
             --muted: #7d8590;
             --green: #3fb950;
+            --purple: #a371f7;
+=======
+            --text: #e6edf3;
+            --muted: #7d8590;
+            --green: #3fb950;
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
             --red: #f85149;
             --blue: #58a6ff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+<<<<<<< HEAD
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            width: 64px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 28px;
+            z-index: 10;
+        }
+
+        .sidebar-logo {
+            width: 36px; height: 36px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Fraunces', serif;
+            font-weight: 700;
+            color: var(--bg);
+            font-size: 1.1rem;
+        }
+
+        .sidebar-icon {
+            width: 38px; height: 38px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: var(--muted);
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-icon:hover, .sidebar-icon.active {
+            background: var(--surface2);
+            color: var(--accent);
+        }
+
+        /* ── Main ── */
+        .main {
+            margin-left: 64px;
+            padding: 32px 36px;
+        }
+
+        /* ── Top bar ── */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 36px;
+        }
+
+        .topbar-left h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .topbar-left p {
+            color: var(--muted);
+            font-size: 0.82rem;
+            margin-top: 5px;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-new {
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: 8px;
+            padding: 11px 20px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: all 0.2s;
+        }
+
+        .btn-new:hover {
+            background: #f5b830;
+            transform: translateY(-1px);
+        }
+
+        /* ── Stats ── */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'Fraunces', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        /* ── Table ── */
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-toolbar span {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: 12px 20px;
+            text-align: left;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface2); }
+
+        tbody td {
+            padding: 14px 20px;
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+
+        .id-pill {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 20px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+=======
         body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
         .sidebar {
@@ -77,11 +285,104 @@
 
         .id-pill { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
         .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
         .badge-creado    { background: rgba(240,165,0,0.15);  color: #f0a500; }
         .badge-confirmado{ background: rgba(163,113,247,0.15); color: #a371f7; }
         .badge-entregado { background: rgba(63,185,80,0.15);  color: #3fb950; }
         .badge-cancelado { background: rgba(248,81,73,0.15);  color: #f85149; }
 
+<<<<<<< HEAD
+        .cliente-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+        }
+
+        .cliente-avatar {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 0.62rem;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .btn-action {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.15s;
+            margin-right: 4px;
+        }
+
+        .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-action.del:hover { border-color: var(--red); color: var(--red); }
+
+        /* ── Modal ── */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.open { display: flex; }
+
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            width: 92%;
+            max-width: 520px;
+            padding: 0;
+            overflow: hidden;
+            animation: modalIn 0.25s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            padding: 22px 26px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+
+=======
         .cliente-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; }
         .cliente-avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--bg); font-size: 0.62rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
@@ -102,11 +403,228 @@
         .modal-header { padding: 22px 26px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); z-index: 1; }
         .modal-header h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 600; }
         .modal-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; transition: color 0.15s; }
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
         .modal-close:hover { color: var(--text); }
 
         .modal-body { padding: 22px 26px; }
 
         .field { margin-bottom: 16px; }
+<<<<<<< HEAD
+
+        .field label {
+            display: block;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 7px;
+            font-weight: 500;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 11px 14px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .field input:focus,
+        .field select:focus { border-color: var(--accent); }
+
+        .field select option { background: var(--surface2); }
+
+        /* Cliente search */
+        .cliente-search-wrap {
+            display: flex;
+            gap: 8px;
+        }
+
+        .cliente-search-wrap input { flex: 1; }
+
+        .btn-buscar {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 7px;
+            padding: 11px 16px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-buscar:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Dropdown clientes */
+        .clientes-dropdown {
+            display: none;
+            margin-top: 6px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .clientes-dropdown.show { display: block; }
+
+        .cliente-option {
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cliente-option:last-child { border-bottom: none; }
+        .cliente-option:hover { background: var(--surface2); }
+
+        .cliente-option-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .cliente-option-info .name {
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        .cliente-option-info .cedula {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .cliente-selected {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: rgba(240,165,0,0.08);
+            border: 1px solid rgba(240,165,0,0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 8px;
+        }
+
+        .cliente-selected.show { display: flex; }
+
+        .cliente-selected .info .name {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--accent);
+        }
+
+        .cliente-selected .info .sub {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .btn-clear-cliente {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.15s;
+        }
+
+        .btn-clear-cliente:hover { color: var(--red); }
+
+        .no-clientes {
+            padding: 16px 14px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .modal-footer {
+            padding: 16px 26px 22px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-save {
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: 7px;
+            padding: 11px 24px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-save:hover { background: #f5b830; }
+
+        .btn-cancel-m {
+            background: var(--surface2);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 11px 18px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-cancel-m:hover { color: var(--text); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.3s;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        /* Empty state */
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+
+        .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .empty p { font-size: 0.9rem; }
+=======
         .field label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 7px; font-weight: 500; }
         .field input, .field select {
             width: 100%; background: var(--bg); border: 1px solid var(--border);
@@ -186,12 +704,27 @@
         .toast.show { opacity: 1; transform: translateY(0); }
 
         .divider { height: 1px; background: var(--border); margin: 18px 0; }
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
     </style>
 </head>
 <body>
 
 <div id="toast" class="toast"></div>
 
+<<<<<<< HEAD
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-logo">P</div>
+    <div class="sidebar-icon active" title="Pedidos">📦</div>
+    <div class="sidebar-icon" title="Clientes">👥</div>
+    <div class="sidebar-icon" title="Reportes">📊</div>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+    <!-- Top bar -->
+=======
 <div class="sidebar">
     <div class="sidebar-logo">P</div>
     <a href="/pedidos"     class="sidebar-icon active" title="Pedidos">📦</a>
@@ -201,11 +734,40 @@
 </div>
 
 <div class="main">
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
     <div class="topbar">
         <div class="topbar-left">
             <h1>Pedidos</h1>
             <p>Gestión y control de órdenes</p>
         </div>
+<<<<<<< HEAD
+        <button class="btn-new" onclick="openAddModal()">
+            <span>＋</span> Nuevo Pedido
+        </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-label">Total</div>
+            <div class="stat-value" id="stat-total" style="color: var(--text)">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Creados</div>
+            <div class="stat-value" style="color: var(--accent)" id="stat-creado">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Entregados</div>
+            <div class="stat-value" style="color: var(--green)" id="stat-entregado">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Cancelados</div>
+            <div class="stat-value" style="color: var(--red)" id="stat-cancelado">0</div>
+        </div>
+    </div>
+
+    <!-- Table -->
+=======
         <button class="btn-new" onclick="openAddModal()">＋ Nuevo Pedido</button>
     </div>
 
@@ -228,6 +790,7 @@
         </div>
     </div>
 
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
     <div class="table-card">
         <div class="table-toolbar">
             <span id="table-count">Cargando pedidos...</span>
@@ -235,10 +798,22 @@
         <table>
             <thead>
             <tr>
+<<<<<<< HEAD
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="tabla-body">
+            <!-- Thymeleaf fallback -->
+=======
                 <th>#</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th>Acciones</th>
             </tr>
             </thead>
             <tbody id="tabla-body">
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
             <tr th:each="p : ${pedidos}" th:if="${pedidos != null}">
                 <td><span class="id-pill" th:text="${p.id}"></span></td>
                 <td th:text="${p.fechaPedido}"></td>
@@ -249,12 +824,24 @@
                     </div>
                 </td>
                 <td>
+<<<<<<< HEAD
+                    <span th:text="${p.estado}"
+                          th:class="'badge badge-' + ${#strings.toLowerCase(p.estado)}">
+                    </span>
+                </td>
+                <td>
+                    <button class="btn-action"
+                            th:data-id="${p.id}"
+                            th:data-fecha="${p.fechaPedido}"
+                            th:data-estado="${p.estado}"
+=======
                     <span th:text="${p.estado}" th:class="'badge badge-' + ${#strings.toLowerCase(p.estado)}"></span>
                 </td>
                 <td>
                     <a class="btn-action view" th:href="@{/pedidos/detalle/{id}(id=${p.id})}">👁️ Ver</a>
                     <button class="btn-action"
                             th:data-id="${p.id}" th:data-fecha="${p.fechaPedido}" th:data-estado="${p.estado}"
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
                             onclick="openEditModal(this)">✏️ Editar</button>
                     <form th:action="@{/pedidos/eliminar/{id}(id=${p.id})}" method="post" style="display:inline">
                         <button class="btn-action del" type="submit">🗑️</button>
@@ -266,11 +853,44 @@
     </div>
 </div>
 
+<<<<<<< HEAD
+<!-- ═══ MODAL AGREGAR CORREGIDO ═══ -->
+=======
 <!-- MODAL AGREGAR -->
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
 <div id="addModal" class="modal">
     <div class="modal-box">
         <div class="modal-header">
             <h3>Nuevo Pedido</h3>
+<<<<<<< HEAD
+            <button type="button" class="modal-close" onclick="closeAddModal()">✕</button>
+        </div>
+
+        <form th:action="@{/pedidos/agregar}" method="post" onsubmit="return validarFormulario()">
+            <div class="modal-body">
+
+                <!-- Cliente -->
+                <div class="field">
+                    <label>Cliente</label>
+
+                    <div class="cliente-search-wrap">
+                        <input type="text"
+                               id="searchInput"
+                               placeholder="Buscar por nombre o cédula..."
+                               autocomplete="off"
+                               oninput="filtrarClientes(this.value)">
+                        <button type="button" class="btn-buscar" onclick="cargarClientes()">
+                            🔍 Buscar
+                        </button>
+                    </div>
+
+                    <div id="clientesDropdown" class="clientes-dropdown"></div>
+
+                    <div id="clienteSeleccionado" class="cliente-selected">
+                        <div class="cliente-avatar"
+                             id="selAvatar"
+                             style="width:32px;height:32px;font-size:0.8rem">--</div>
+=======
             <button class="modal-close" onclick="closeAddModal()">✕</button>
         </div>
         <form th:action="@{/pedidos/agregar}" method="post" id="formAgregar">
@@ -285,10 +905,23 @@
                     <div id="clientesDropdown" class="dropdown"></div>
                     <div id="clienteSeleccionado" class="selected-chip">
                         <div class="drop-avatar" id="selAvatar">--</div>
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
                         <div class="info">
                             <div class="name" id="selNombre">—</div>
                             <div class="sub" id="selCedula">—</div>
                         </div>
+<<<<<<< HEAD
+                        <button type="button"
+                                class="btn-clear-cliente"
+                                onclick="limpiarCliente()">✕</button>
+                    </div>
+
+                    <!-- 🔥 ESTE ES EL IMPORTANTE -->
+                    <input type="hidden" name="clienteId" id="clienteIdInput" required>
+                </div>
+
+                <!-- Fecha -->
+=======
                         <button type="button" class="btn-clear" onclick="limpiarCliente()">✕</button>
                     </div>
                     <input type="hidden" name="clienteId" id="clienteIdInput">
@@ -334,11 +967,16 @@
 
                 <div class="divider"></div>
 
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
                 <div class="field">
                     <label>Fecha del Pedido</label>
                     <input type="date" name="fechaPedido" required>
                 </div>
 
+<<<<<<< HEAD
+                <!-- Estado -->
+=======
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
                 <div class="field">
                     <label>Estado</label>
                     <select name="estado" required>
@@ -349,16 +987,29 @@
                         <option value="CANCELADO">Cancelado</option>
                     </select>
                 </div>
+<<<<<<< HEAD
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeAddModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Pedido</button>
+=======
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel-m" onclick="closeAddModal()">Cancelar</button>
                 <button type="button" class="btn-save" onclick="submitPedido()">Guardar Pedido</button>
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
             </div>
         </form>
     </div>
 </div>
 
+<<<<<<< HEAD
+<!-- ═══ MODAL EDITAR ═══ -->
+=======
 <!-- MODAL EDITAR -->
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
 <div id="editModal" class="modal">
     <div class="modal-box">
         <div class="modal-header">
@@ -391,6 +1042,86 @@
 </div>
 
 <script>
+<<<<<<< HEAD
+    let todosClientes = [];
+
+    // ── Stats desde Thymeleaf ──
+    document.addEventListener('DOMContentLoaded', () => {
+        const rows = document.querySelectorAll('#tabla-body tr');
+        const total = rows.length;
+        let creado = 0, entregado = 0, cancelado = 0;
+
+        rows.forEach(r => {
+            const badge = r.querySelector('.badge');
+            if (!badge) return;
+            const txt = badge.textContent.trim().toUpperCase();
+            if (txt === 'CREADO')    creado++;
+            if (txt === 'ENTREGADO') entregado++;
+            if (txt === 'CANCELADO') cancelado++;
+        });
+
+        document.getElementById('stat-total').textContent    = total;
+        document.getElementById('stat-creado').textContent   = creado;
+        document.getElementById('stat-entregado').textContent = entregado;
+        document.getElementById('stat-cancelado').textContent = cancelado;
+        document.getElementById('table-count').textContent   = total + ' pedido(s) registrado(s)';
+    });
+
+    // ── Cargar clientes desde microservicio ──
+    function cargarClientes() {
+        const dropdown = document.getElementById('clientesDropdown');
+        dropdown.innerHTML = '<div class="no-clientes">Cargando...</div>';
+        dropdown.classList.add('show');
+
+        fetch('/pedidos/clientes')
+            .then(r => r.json())
+            .then(data => {
+                todosClientes = data;
+                renderClientes(data);
+            })
+            .catch(() => {
+                dropdown.innerHTML = '<div class="no-clientes">⚠️ Servicio de clientes no disponible</div>';
+            });
+    }
+
+    function filtrarClientes(q) {
+        if (!q) { renderClientes(todosClientes); return; }
+        const f = todosClientes.filter(c =>
+            (c.nombre + ' ' + c.apellido + c.cedula).toLowerCase().includes(q.toLowerCase())
+        );
+        renderClientes(f);
+        if (todosClientes.length === 0) cargarClientes();
+    }
+
+    function renderClientes(lista) {
+        const dropdown = document.getElementById('clientesDropdown');
+        dropdown.classList.add('show');
+
+        if (lista.length === 0) {
+            dropdown.innerHTML = '<div class="no-clientes">No se encontraron clientes</div>';
+            return;
+        }
+
+        dropdown.innerHTML = lista.map(c => `
+            <div class="cliente-option" onclick="seleccionarCliente(${c.id}, '${c.nombre}', '${c.apellido}', '${c.cedula}')">
+                <div class="cliente-option-avatar">${c.nombre[0]}${c.apellido[0]}</div>
+                <div class="cliente-option-info">
+                    <div class="name">${c.nombre} ${c.apellido}</div>
+                    <div class="cedula">Cédula: ${c.cedula}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function seleccionarCliente(id, nombre, apellido, cedula) {
+        document.getElementById('clienteIdInput').value = id;
+        document.getElementById('selNombre').textContent = nombre + ' ' + apellido;
+        document.getElementById('selCedula').textContent = 'Cédula: ' + cedula;
+        document.getElementById('selAvatar').textContent = nombre[0] + apellido[0];
+        document.getElementById('clienteSeleccionado').classList.add('show');
+        document.getElementById('clientesDropdown').classList.remove('show');
+        document.getElementById('searchInput').value = '';
+=======
     let todosClientes  = [];
     let todosProductos = [];
     let detalleItems   = [];
@@ -453,6 +1184,7 @@
         document.getElementById('clienteSeleccionado').classList.add('show');
         document.getElementById('clientesDropdown').classList.remove('show');
         document.getElementById('searchCliente').value = '';
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
     }
 
     function limpiarCliente() {
@@ -460,6 +1192,57 @@
         document.getElementById('clienteSeleccionado').classList.remove('show');
     }
 
+<<<<<<< HEAD
+    // ── Modales ──
+    function openAddModal() {
+        document.getElementById('addModal').classList.add('open');
+    }
+
+    function closeAddModal() {
+        document.getElementById('addModal').classList.remove('open');
+        document.getElementById('clientesDropdown').classList.remove('show');
+        limpiarCliente();
+    }
+
+    function openEditModal(btn) {
+        document.getElementById('editId').value      = btn.dataset.id;
+        document.getElementById('editFecha').value   = btn.dataset.fecha;
+        document.getElementById('editEstado').value  = btn.dataset.estado;
+        document.getElementById('editModal').classList.add('open');
+    }
+    function validarFormulario() {
+        const clienteId = document.getElementById('clienteIdInput').value;
+
+        if (!clienteId) {
+            mostrarToast("Debes seleccionar un cliente antes de guardar.");
+            return false;
+        }
+
+        return true;
+    }
+
+    function mostrarToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').classList.remove('open');
+    }
+
+    // Cerrar dropdown al click fuera
+    document.addEventListener('click', e => {
+        const wrap = document.querySelector('.cliente-search-wrap');
+        const drop = document.getElementById('clientesDropdown');
+        if (wrap && !wrap.contains(e.target)) {
+            drop.classList.remove('show');
+        }
+    });
+</script>
+
+=======
     function cargarProductos() {
         const drop = document.getElementById('productosDropdown');
         drop.innerHTML = '<div class="no-items">Cargando productos...</div>';
@@ -611,5 +1394,6 @@
         setTimeout(() => t.classList.remove('show'), 2800);
     }
 </script>
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
 </body>
 </html>

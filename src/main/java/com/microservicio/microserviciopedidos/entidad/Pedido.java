@@ -2,8 +2,11 @@ package com.microservicio.microserviciopedidos.entidad;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+<<<<<<< HEAD
+=======
 import java.util.ArrayList;
 import java.util.List;
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
 
 @Entity
 @Table(name = "pedido")
@@ -19,6 +22,32 @@ public class Pedido {
     @Column(name = "fecha_pedido", nullable = false)
     private LocalDate fechaPedido;
 
+<<<<<<< HEAD
+    @Column(name = "cliente_id", nullable = false)  // ← agrega esto
+    private Long clienteId;
+    // 🔹 Constructor vacío (OBLIGATORIO para JPA)
+    public Pedido() {
+    }
+
+
+    // Constructor vacío
+
+    // Constructor con campos
+    public Pedido(String estado, LocalDate fechaPedido, Long clienteId) {
+        this.estado = estado;
+        this.fechaPedido = fechaPedido;
+        this.clienteId = clienteId;
+    }
+
+    public Long getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
+    // 🔹 Getters y Setters
+=======
     @Column(name = "cliente_id", nullable = false)
     private Long clienteId;
 
@@ -48,10 +77,18 @@ public class Pedido {
 
     // 🔹 Getters y Setters
 
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
     public Long getId() {
         return id;
     }
 
+<<<<<<< HEAD
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+=======
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
     public String getEstado() {
         return estado;
     }
@@ -68,6 +105,10 @@ public class Pedido {
         this.fechaPedido = fechaPedido;
     }
 
+<<<<<<< HEAD
+
+}
+=======
     public Long getClienteId() {
         return clienteId;
     }
@@ -84,3 +125,4 @@ public class Pedido {
         this.detalles = detalles;
     }
 }
+>>>>>>> f1292c2c3ce7b5b686491f4482c7d63d035d5133
