@@ -1,40 +1,48 @@
-name: Deploy to Azure VM
+name: CI/CD Pedido Microservice
 
 on:
   push:
-    branches:
-      - main  # O la rama que uses (master/main)
+    branches: [ main ]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      - name: Deploy to Azure VM via SSH
-        uses: appleboy/ssh-action@v0.1.10
+  build-and-deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          host: ${{ secrets.AZURE_VM_IP }}
-          username: ${{ secrets.AZURE_VM_USER }}
-          key: ${{ secrets.AZURE_SSH_KEY }}
-       script: |
-            cd /home/azureuser/
-            
-            # 1. Detener y ELIMINAR contenedores y redes viejas
-            docker-compose down --remove-orphans
-            
-            # 2. Actualizar el código de Clientes
-            cd /home/azureuser/MicroserviciosApp
-            git pull origin master || git pull origin main
-            
-            # 3. Actualizar el código de Pedidos
-            cd /home/azureuser/Microservicio
-            git pull origin master || git pull origin main
-            
-            # 4. Volver a la raíz y levantar todo de nuevo
-            cd /home/azureuser/
-            docker-compose up -d --build
-            
-            # 5. Limpieza profunda de imágenes y contenedores parados
-            docker system prune -f
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build project
+        run: mvn clean package -DskipTests
+
+      - name: Login DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: docker build -t juliana2507/pedido:latest .
+
+      - name: Push Docker Image
+        run: docker push juliana2507/pedido:latest
+
+      - name: Deploy to Azure VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd ~/pedido
+            docker-compose pull
+            docker-compose up -d
