@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "producto-service", url = "http://20.221.105.223")
+@FeignClient(name = "producto-service", url = "http://40.82.168.11:8090")
 public interface ProductoClient {
 
     @GetMapping("/api/productos")
